@@ -1,117 +1,116 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Основной стиль контейнера товаров */
+#products-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+/* Стили для карточки продукта */
+.product {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 220px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стиль изображения продукта */
+.product img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Информация о продукте */
+.product-info {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Стили для контейнера управления количеством */
+.product-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Стили для кнопок */
+.product-controls button {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 5px;
+}
+
+.product-controls button:hover {
+  background-color: #ccc;
+}
+
+/* Стили для счётчика количества */
+.counter {
+  font-size: 16px;
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
   h1 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 20px;
   }
-  
-  /* Основной стиль контейнера товаров */
-  #products-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    padding-top: 20px;
-  }
-  
-  /* Стили для карточки продукта */
-  .product {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 200px;
+
+  .container {
     padding: 10px;
-    text-align: center;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
-  
-  /* Стиль изображения продукта */
+
   .product img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+    width: 60px;
+    height: 60px;
   }
-  
-  /* Информация о продукте */
-  .product-info {
-    margin-top: 10px;
+
+  .product-controls button {
+    width: 50px;
+    font-size: 22px;
+  }
+
+  .product-info h2 {
+    font-size: 16px;
+  }
+
+  .product-info p {
     font-size: 14px;
   }
-  
-  /* Стили для контейнера управления количеством */
-  .product-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  /* Стили для кнопок */
-  .product-controls button {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-    background-color: #ddd;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin: 0 5px;
-  }
-  
-  .product-controls button:hover {
-    background-color: #ccc;
-  }
-  
-  /* Стили для счётчика количества */
+
   .counter {
-    font-size: 16px;
-    font-weight: bold;
-    width: 30px;
-    text-align: center;
+    font-size: 24px;
   }
-  
-  /* Адаптивность для мобильных устройств */
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 20px;
-    }
-  
-    .container {
-      padding: 10px;
-    }
-  
-    .product img {
-      width: 60px;
-      height: 60px;
-    }
-  
-    .product-controls button {
-      width: 50px;
-      font-size: 22px;
-    }
-  
-    .product-info h2 {
-      font-size: 16px;
-    }
-  
-    .product-info p {
-      font-size: 14px;
-    }
-  
-    .counter {
-      font-size: 24px;
-    }
-  }
-  
+}
