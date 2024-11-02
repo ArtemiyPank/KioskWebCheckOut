@@ -63,15 +63,31 @@ function getSalesDataFromLocalStorage() {
   return data ? JSON.parse(data) : {};
 }
 
-// Копирование отчета в буфер обмена
+// Копирование отчета в буфер обмена, совместимое с мобильными устройствами
 function copyReportToClipboard() {
   const reportText = document.getElementById('sales-report').getAttribute('data-report-text');
-  navigator.clipboard.writeText(reportText).then(() => {
+
+  // Создаем временный элемент <textarea> для копирования текста
+  const tempTextArea = document.createElement('textarea');
+  tempTextArea.value = reportText;
+  document.body.appendChild(tempTextArea);
+
+  // Выделяем текст в <textarea> и копируем его в буфер обмена
+  tempTextArea.select();
+  tempTextArea.setSelectionRange(0, 99999); // Для мобильных устройств
+
+  try {
+    document.execCommand('copy');
     alert("Report copied to clipboard!");
-  }).catch(err => {
+  } catch (err) {
     console.error("Failed to copy report:", err);
-  });
+    alert("Failed to copy report. Please try manually.");
+  }
+
+  // Удаляем временный элемент <textarea>
+  document.body.removeChild(tempTextArea);
 }
+
 
 // Функция сброса счетчиков с двойным подтверждением
 function resetCountersWithConfirmation() {
