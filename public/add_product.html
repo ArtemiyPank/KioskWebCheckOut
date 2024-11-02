@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Product</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html">Home</a> | <a href="report.html">Sales Report</a>
+    </nav>
+
+    <h2>Add New Product</h2>
+    <form id="new-product-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      
+      <label for="price">Price (₪):</label>
+      <input type="number" id="price" name="price" required>
+      
+      <label for="category">Category:</label>
+      <input type="text" id="category" name="category" required>
+      
+      <label for="image">Image Path (e.g., images/product.jpg):</label>
+      <input type="text" id="image" name="image" required>
+      
+      <button type="submit">Add Product</button>
+    </form>
+  </div>
+
+  <script src="add_product.js"></script>
+</body>
+</html>

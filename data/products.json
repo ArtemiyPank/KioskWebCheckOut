@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Cola",
+    "price": 100,
+    "category": "Drinks",
+    "image": "https://wallpapers.com/images/hd/coca-cola-1400-x-930-picture-f4qvuxpqn9pu96xf.jpg",
+    "soldToday": 0
+  },
+  {
+    "id": 2,
+    "name": "Lays",
+    "price": 200,
+    "category": "Crisps",
+    "image": "https://ir.ozone.ru/s3/video-35/01HJ8561KYPQC612PC3CEZXGDS/cover/c700/cover.jpg",
+    "soldToday": 0
+  },
+  {
+    "name": "ц",
+    "price": 23,
+    "category": "ц",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/0/03/Kif_Kef.png",
+    "id": 3,
+    "soldToday": 0
+  }
+]
