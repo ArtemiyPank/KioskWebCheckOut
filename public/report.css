@@ -1,49 +1,66 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  h2 {
-    font-size: 22px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .report-item {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 10px;
-  }
-  
-  .report-item strong {
-    font-size: 1.1em;
-  }
-  
-  .total-revenue {
-    padding: 15px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #4CAF50;
-    border-top: 2px solid #4CAF50;
-    margin-top: 15px;
-    text-align: center;
-  }
-  
-  /* Адаптивность для мобильных устройств */
-  @media (max-width: 768px) {
-    h2 {
-      font-size: 20px;
-    }
-  
-    .total-revenue {
-      font-size: 1em;
-    }
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.report-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.report-item strong {
+  font-size: 1.1em;
+}
+
+.total-revenue {
+  padding: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #4CAF50;
+  border-top: 2px solid #4CAF50;
+  margin-top: 15px;
+  text-align: center;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#copy-report {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#copy-report:hover {
+  background-color: #45a049;
+}
+
+#reset-counters {
+  background-color: #f44336;
+  color: white;
+}
+
+#reset-counters:hover {
+  background-color: #e53935;
+}
