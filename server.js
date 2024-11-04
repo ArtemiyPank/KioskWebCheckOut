@@ -89,6 +89,62 @@ app.post('/api/categories', (req, res) => {
   });
 });
 
+
+// Эндпоинт для обновления товара
+app.put('/api/products/:id', (req, res) => {
+  const productId = parseInt(req.params.id);
+  const updatedProduct = req.body;
+
+  fs.readFile(productsFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading products file:', err);
+      return res.status(500).send('Error reading products file');
+    }
+
+    const products = JSON.parse(data);
+    const productIndex = products.findIndex(p => p.id === productId);
+
+    if (productIndex === -1) {
+      return res.status(404).send('Product not found');
+    }
+
+    products[productIndex] = { ...products[productIndex], ...updatedProduct };
+
+    fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
+      if (err) {
+        console.error('Error writing products file:', err);
+        return res.status(500).send('Error writing products file');
+      }
+      res.status(200).json(products[productIndex]);
+    });
+  });
+});
+
+// Эндпоинт для удаления товара
+app.delete('/api/products/:id', (req, res) => {
+  const productId = parseInt(req.params.id);
+
+  fs.readFile(productsFilePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading products file:', err);
+      return res.status(500).send('Error reading products file');
+    }
+
+    let products = JSON.parse(data);
+    products = products.filter(p => p.id !== productId);
+
+    fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
+      if (err) {
+        console.error('Error writing products file:', err);
+        return res.status(500).send('Error writing products file');
+      }
+      res.status(200).send('Product deleted successfully');
+    });
+  });
+});
+
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

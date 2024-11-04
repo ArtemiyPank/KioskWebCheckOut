@@ -46,40 +46,73 @@ h1 {
 /* Информация о продукте */
 .product-info {
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* Стили для контейнера управления количеством */
 .product-controls {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 /* Стили для кнопок */
-.product-controls button {
-  width: 30px;
-  height: 30px;
-  font-size: 18px;
+.counter-container button {
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
   background-color: #ddd;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin: 0 5px;
+  margin: 0 8px;
 }
 
-.product-controls button:hover {
+.counter-container button:hover {
   background-color: #ccc;
 }
 
 /* Стили для счётчика количества */
 .counter {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
-  width: 30px;
+  width: 50px;
   text-align: center;
+}
+
+/* Контейнер для кнопок изменения и удаления */
+.edit-btn-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.edit-btn-container button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-btn-container button:nth-child(2) {
+  background-color: #dc3545;
+}
+
+.edit-btn-container button:hover {
+  opacity: 0.9;
+}
+
+.filter_container{
+  display: flex;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -99,7 +132,7 @@ h1 {
 
   }
 
-  .product-controls button {
+  .counter-container button {
     width: 40px;
     font-size: 22px;
   }
