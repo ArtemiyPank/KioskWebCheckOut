@@ -11,12 +11,20 @@ async function loadCategories() {
     const categories = await response.json();
     const categoryFilter = document.getElementById('category-filter');
 
+    // Очистка существующих элементов перед добавлением новых
+    categoryFilter.innerHTML = `
+      <label>
+        <input type="radio" name="category" value="all" checked>
+        All
+      </label>
+    `;
+
     // Добавляем радиокнопки для каждой категории
-    categories.forEach(category => {
+    categories.forEach(cat => {
       const label = document.createElement('label');
       label.innerHTML = `
-        <input type="radio" name="category" value="${category}">
-        ${category}
+        <input type="radio" name="category" value="${cat.name}">
+        ${cat.name}
       `;
       categoryFilter.appendChild(label);
     });
@@ -27,6 +35,7 @@ async function loadCategories() {
     console.error("Error loading categories:", error);
   }
 }
+
 
 async function loadProducts() {
   try {
@@ -54,7 +63,7 @@ function displayProducts(products, cachedCounters) {
     productElement.setAttribute('data-category', product.category);
 
     productElement.innerHTML = `
-      <img src="${product.image}" alt="${product.name}">
+      <img src="${product.image_url}" alt="${product.name}">
       <div class="product-info">
         <h2>${product.name}</h2>
         <p>Price: ${product.price} ₪</p>
@@ -112,9 +121,13 @@ function editProduct(productId) {
   const product = document.querySelector(`.product[data-id="${productId}"]`);
   const name = product.querySelector('h2').innerText;
   const price = parseFloat(product.querySelector('.product-info p').innerText.replace('Price: ', '').replace('₪', ''));
+  const imageUrl = product.querySelector('img').src;
+  const category = product.getAttribute('data-category');
 
   document.getElementById('edit-name').value = name;
   document.getElementById('edit-price').value = price;
+  document.getElementById('edit-image-url').value = imageUrl;
+  document.getElementById('edit-category').value = category;
 
   openEditModal();
 }
@@ -147,9 +160,11 @@ function closeEditModal() {
 document.getElementById('save-changes-button').addEventListener('click', async () => {
   const newName = document.getElementById('edit-name').value;
   const newPrice = parseFloat(document.getElementById('edit-price').value);
+  const newImageUrl = document.getElementById('edit-image-url').value;
+  const newCategory = document.getElementById('edit-category').value;
 
-  if (!newName || isNaN(newPrice)) {
-    alert("Please enter valid data.");
+  if (!newName || isNaN(newPrice) || !newImageUrl || !newCategory) {
+    alert("Please fill in all fields.");
     return;
   }
 
@@ -159,7 +174,7 @@ document.getElementById('save-changes-button').addEventListener('click', async (
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ name: newName, price: newPrice })
+      body: JSON.stringify({ name: newName, price: newPrice, image_url: newImageUrl, category: newCategory })
     });
 
     if (!response.ok) throw new Error(`Failed to edit product: ${response.status} ${response.statusText}`);

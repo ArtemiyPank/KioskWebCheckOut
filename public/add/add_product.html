@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add product</title>
+  <link rel="stylesheet" href="../other css/navigation.css">
+  <link rel="stylesheet" href="add_product.css">
+</head>
+<body>
+<div class="container">
+  <div class="navigation">
+    <a href="../index.html" class="nav-button">Home</a>
+    <a href="add_product.html" class="nav-button">Add Product</a>
+    <a href="../report/report.html" class="nav-button nav-button-secondary">Report</a>
+  </div>
+
+  <h2>Add New Product</h2>
+
+  <div id="add-product-container">
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Enter product name" required>
+    
+    <label for="price">Price (₪):</label>
+    <input type="number" id="price" placeholder="Enter product price" required>
+    
+    <label for="category">Category:</label>
+    <select id="category-select" required>
+      <option value="">Select a category</option>
+    </select>
+    <label for="image">Image link:</label>
+    <input type="text" id="image" name="image" required>
+    <br>
+    <label for="new-category">Or add a new category:</label>
+    <input type="text" id="new-category" placeholder="New category name">
+    <button id="add-category-button">Add Category</button>
+    
+    <button id="add-product-button">Add Product</button>
+  </div>
+</div>
+
+<script src="add_product.js"></script>
+</body>
+
+</html>
+

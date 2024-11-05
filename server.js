@@ -1,148 +1,246 @@
+
 const express = require('express');
-const fs = require('fs');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json()); // Поддержка JSON в теле запроса
-
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const productsFilePath = path.join(__dirname, 'data', 'products.json');
-const categoriesFilePath = path.join(__dirname, 'data', 'categories.json');
+const db = new sqlite3.Database('./data/kiosk.db', (err) => {
+  if (err) {
+    console.error('Error opening database:', err);
+  } else {
+    console.log('Connected to SQLite database');
+  }
+});
 
-// Эндпоинт для получения списка товаров
+// Эндпоинт для получения товаров
 app.get('/api/products', (req, res) => {
-  fs.readFile(productsFilePath, 'utf8', (err, data) => {
+  const query = `
+    SELECT products.id, products.name, products.price, products.image_url, categories.name AS category 
+    FROM products 
+    JOIN categories ON products.category_id = categories.id
+  `;
+  
+  db.all(query, [], (err, rows) => {
     if (err) {
-      console.error('Error reading products file:', err);
-      return res.status(500).send('Error reading products file');
+      console.error(err.message);
+      res.status(500).send('Error retrieving products');
+    } else {
+      res.json(rows);
     }
-    res.json(JSON.parse(data));
   });
 });
 
-// Эндпоинт для добавления нового товара
+// Эндпоинт для добавления товара
 app.post('/api/products', (req, res) => {
-  const newProduct = req.body;
+  const { name, price, category_id, image_url } = req.body;
+  db.run(
+    `INSERT INTO products (name, price, category_id, image_url) VALUES (?, ?, ?, ?)`,
+    [name, price, category_id, image_url],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send('Error adding product');
+      } else {
+        res.status(201).json({ id: this.lastID, name, price, category_id, image_url });
+      }
+    }
+  );
+});
 
-  fs.readFile(productsFilePath, 'utf8', (err, data) => {
+// Эндпоинт для обновления товара с изображением и категорией
+app.put('/api/products/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, price, image_url, category } = req.body;
+
+  // Получаем ID категории по её названию
+  db.get(`SELECT id FROM categories WHERE name = ?`, [category], (err, row) => {
     if (err) {
-      console.error('Error reading products file:', err);
-      return res.status(500).send('Error reading products file');
+      console.error(err.message);
+      res.status(500).send('Error retrieving category ID');
+      return;
     }
 
-    const products = JSON.parse(data);
-    newProduct.id = products.length ? products[products.length - 1].id + 1 : 1;
-    newProduct.soldToday = 0;
+    if (!row) {
+      res.status(400).send('Category not found');
+      return;
+    }
 
-    products.push(newProduct);
+    const categoryId = row.id;
 
-    fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
-      if (err) {
-        console.error('Error writing products file:', err);
-        return res.status(500).send('Error writing products file');
+    db.run(
+      `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
+      [name, price, image_url, categoryId, id],
+      function (err) {
+        if (err) {
+          console.error(err.message);
+          res.status(500).send('Error updating product');
+        } else if (this.changes === 0) {
+          res.status(404).send('Product not found');
+        } else {
+          res.status(200).send('Product updated successfully');
+        }
       }
-      res.status(201).json(newProduct);
-    });
+    );
+  });
+});
+
+
+// Эндпоинт для удаления товара
+app.delete('/api/products/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.run(`DELETE FROM products WHERE id = ?`, [id], function (err) {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send('Error deleting product');
+    } else if (this.changes === 0) {
+      res.status(404).send('Product not found');
+    } else {
+      res.status(200).send('Product deleted successfully');
+    }
   });
 });
 
 // Эндпоинт для получения списка категорий
 app.get('/api/categories', (req, res) => {
-  fs.readFile(categoriesFilePath, 'utf8', (err, data) => {
+  db.all(`SELECT * FROM categories`, [], (err, rows) => {
     if (err) {
-      console.error('Error reading categories file:', err);
-      return res.status(500).send('Error reading categories file');
+      console.error(err.message);
+      res.status(500).send('Error retrieving categories');
+    } else {
+      res.json(rows);
     }
-    res.json(JSON.parse(data));
   });
 });
 
 // Эндпоинт для добавления новой категории
 app.post('/api/categories', (req, res) => {
-  const newCategory = req.body.category;
-
-  fs.readFile(categoriesFilePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading categories file:', err);
-      return res.status(500).send('Error reading categories file');
-    }
-
-    const categories = JSON.parse(data);
-    
-    // Проверяем, если категория уже существует
-    if (categories.includes(newCategory)) {
-      return res.status(400).json({ message: "Category already exists." });
-    }
-
-    categories.push(newCategory);
-
-    fs.writeFile(categoriesFilePath, JSON.stringify(categories, null, 2), (err) => {
+  const { name } = req.body;
+  db.run(
+    `INSERT INTO categories (name) VALUES (?)`,
+    [name],
+    function (err) {
       if (err) {
-        console.error('Error writing categories file:', err);
-        return res.status(500).send('Error writing categories file');
+        console.error(err.message);
+        if (err.message.includes('UNIQUE constraint failed')) {
+          res.status(400).send('Category already exists');
+        } else {
+          res.status(500).send('Error adding category');
+        }
+      } else {
+        res.status(201).json({ id: this.lastID, name });
       }
-      res.status(201).json({ category: newCategory });
+    }
+  );
+});
+
+
+// Эндпоинт для проверки существования отчета за сегодняшний день
+app.get('/api/check-report', (req, res) => {
+  const { activityType, date } = req.query;
+
+  let tableName = '';
+  switch (activityType) {
+    case 'in_store':
+      tableName = 'in_store_sales';
+      break;
+    case 'delivery_all':
+      tableName = 'delivery_all_sales';
+      break;
+    case 'delivery_own':
+      tableName = 'delivery_own_sales';
+      break;
+    default:
+      return res.status(400).send('Invalid activity type');
+  }
+
+  db.get(
+    `SELECT COUNT(*) AS reportCount FROM ${tableName} WHERE date = ?`,
+    [date],
+    (err, row) => {
+      if (err) {
+        console.error('Error checking report:', err.message);
+        res.status(500).send('Error checking report');
+      } else {
+        res.json({ reportExists: row.reportCount > 0 });
+      }
+    }
+  );
+});
+
+
+
+// Эндпоинт для сохранения отчета
+app.post('/api/save-report', (req, res) => {
+  const { activityType, date, products } = req.body;
+
+  let tableName = '';
+  switch (activityType) {
+    case 'in_store':
+      tableName = 'in_store_sales';
+      break;
+    case 'delivery_all':
+      tableName = 'delivery_all_sales';
+      break;
+    case 'delivery_own':
+      tableName = 'delivery_own_sales';
+      break;
+    default:
+      return res.status(400).send('Invalid activity type');
+  }
+
+  db.serialize(() => {
+    const stmt = db.prepare(`INSERT INTO ${tableName} (date, product_id, quantity) VALUES (?, ?, ?)`);
+    products.forEach(product => {
+      stmt.run([date, product.product_id, product.quantity], (err) => {
+        if (err) {
+          console.error('Error saving report:', err.message);
+        }
+      });
     });
+    stmt.finalize();
+    res.status(201).send('Report saved successfully');
   });
 });
 
 
-// Эндпоинт для обновления товара
-app.put('/api/products/:id', (req, res) => {
-  const productId = parseInt(req.params.id);
-  const updatedProduct = req.body;
+// Эндпоинт для удаления отчета за сегодняшний день
+app.delete('/api/delete-report', (req, res) => {
+  const { activityType, date } = req.query;
 
-  fs.readFile(productsFilePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading products file:', err);
-      return res.status(500).send('Error reading products file');
-    }
+  let tableName = '';
+  switch (activityType) {
+    case 'in_store':
+      tableName = 'in_store_sales';
+      break;
+    case 'delivery_all':
+      tableName = 'delivery_all_sales';
+      break;
+    case 'delivery_own':
+      tableName = 'delivery_own_sales';
+      break;
+    default:
+      return res.status(400).send('Invalid activity type');
+  }
 
-    const products = JSON.parse(data);
-    const productIndex = products.findIndex(p => p.id === productId);
-
-    if (productIndex === -1) {
-      return res.status(404).send('Product not found');
-    }
-
-    products[productIndex] = { ...products[productIndex], ...updatedProduct };
-
-    fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
+  db.run(
+    `DELETE FROM ${tableName} WHERE date = ?`,
+    [date],
+    function (err) {
       if (err) {
-        console.error('Error writing products file:', err);
-        return res.status(500).send('Error writing products file');
+        console.error('Error deleting report:', err.message);
+        res.status(500).send('Error deleting report');
+      } else {
+        res.status(200).send('Report deleted successfully');
       }
-      res.status(200).json(products[productIndex]);
-    });
-  });
-});
-
-// Эндпоинт для удаления товара
-app.delete('/api/products/:id', (req, res) => {
-  const productId = parseInt(req.params.id);
-
-  fs.readFile(productsFilePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading products file:', err);
-      return res.status(500).send('Error reading products file');
     }
-
-    let products = JSON.parse(data);
-    products = products.filter(p => p.id !== productId);
-
-    fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), (err) => {
-      if (err) {
-        console.error('Error writing products file:', err);
-        return res.status(500).send('Error writing products file');
-      }
-      res.status(200).send('Product deleted successfully');
-    });
-  });
+  );
 });
-
 
 
 app.listen(PORT, () => {
