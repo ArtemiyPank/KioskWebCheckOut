@@ -19,8 +19,8 @@ async function loadCategories() {
 
     categories.forEach(category => {
       const option = document.createElement('option');
-      option.value = category;
-      option.textContent = category;
+      option.value = category.name;
+      option.textContent = category.name;
       categorySelect.appendChild(option);
     });
   } catch (error) {

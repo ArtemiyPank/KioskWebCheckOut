@@ -116,7 +116,22 @@ function updateCounter(productId, change, productName, productPrice) {
 
 let currentProductId;
 
-function editProduct(productId) {
+async function editProduct(productId) {
+
+  const response = await fetch('/api/categories');
+  if (!response.ok) throw new Error("Failed to fetch categories");
+
+  const categories = await response.json();
+  const categorySelect = document.getElementById('edit-category');
+  categorySelect.innerHTML = '';
+
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category.name;
+    option.textContent = category.name;
+    categorySelect.appendChild(option);
+  });
+
   currentProductId = productId;
   const product = document.querySelector(`.product[data-id="${productId}"]`);
   const name = product.querySelector('h2').innerText;
