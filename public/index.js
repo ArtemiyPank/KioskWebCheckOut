@@ -9,6 +9,12 @@ async function loadCategories() {
     if (!response.ok) throw new Error("Failed to fetch categories");
 
     const categories = await response.json();
+
+
+    console.log(categories);
+    localStorage.setItem('categories', categories);
+
+    // const categories = await response.json();
     const categoryFilter = document.getElementById('category-filter');
 
     // Очистка существующих элементов перед добавлением новых
