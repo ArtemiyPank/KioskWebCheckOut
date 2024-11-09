@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory of products</title>
+  <link rel="stylesheet" href="../other css/navigation.css">
+  <link rel="stylesheet" href="../other css/popup_window.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="header-flex">
+      <h1>Product List</h1>
+      <div class="navigation">
+        <a href="index.html" class="nav-button">Product List</a>
+        <a href="../report/report.html" class="nav-button nav-button-secondary">Report</a>
+      </div>
+    </div>
+    
+    <!-- Контейнер для радиокнопок категорий -->
+    <div id="category-filter" class="filter_container">
+      <label>
+        <input type="radio" name="category" value="all" checked>
+        All
+      </label>
+      <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
+    </div>
+  
+    <!-- Контейнер для списка товаров -->
+    <div id="products-container"></div>
+  </div>
+  
+
+  <script src="index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Основной стиль контейнера товаров */
+#products-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+/* Стили для карточки продукта */
+.product {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 220px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стиль изображения продукта */
+.product img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Информация о продукте */
+.product-info {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+/* Стили для контейнера управления количеством */
+.product-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+/* Стили для кнопок */
+.counter-container button {
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 8px;
+}
+
+.counter-container button:hover {
+  background-color: #ccc;
+}
+
+/* Стили для счётчика количества */
+.counter {
+  font-size: 20px;
+  font-weight: bold;
+  width: 50px;
+  text-align: center;
+}
+
+
+.filter_container{
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  h1 {
+    margin: 5px;
+  }
+
+  .container {
+    padding: 8px;
+  }
+
+  .product img {
+    width: 60px;
+    height: 60px;
+    margin: 0;
+
+  }
+
+  .counter-container button {
+    width: 40px;
+    font-size: 22px;
+  }
+
+  .product-info h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .product-info p {
+    font-size: 14px;
+    margin: 0;
+
+  }
+
+  .counter {
+    font-size: 24px;
+  }
+}

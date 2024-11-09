@@ -97,7 +97,7 @@ function resetCountersWithConfirmation() {
       alert("Counters have been reset.");
 
       // Перенаправление на главную страницу после успешного сброса
-      window.location.href = 'index.html';
+      window.location.href = '../products/index.html';
     }
   }
 }
