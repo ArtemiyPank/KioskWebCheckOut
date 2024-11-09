@@ -209,7 +209,7 @@ document.getElementById('save-changes-button').addEventListener('click', async (
 });
 
 // Закрытие модального окна при клике вне его
-window.onclick = function(event) {
+window.onclick = function (event) {
   const modal = document.getElementById('edit-product-modal');
   if (event.target === modal) {
     closeEditModal();

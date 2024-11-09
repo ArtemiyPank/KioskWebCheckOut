@@ -8,6 +8,7 @@ db.serialize(() => {
     price REAL NOT NULL,
     image_url TEXT,
     category_id INTEGER,
+    IsHide INTEGER DEFAULT 0,  -- IsHide с дефолтным значением 0
     FOREIGN KEY (category_id) REFERENCES categories (id)
   )`);
 
@@ -49,5 +50,4 @@ db.serialize(() => {
   )`);
 });
 
-db.close();
 console.log('Database setup completed.');

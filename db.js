@@ -10,7 +10,7 @@ const db = new sqlite3.Database('./data/kiosk.db', (err) => {
 // Получение списка всех продуктов с названием категории
 function getProducts(callback) {
   const query = `
-    SELECT products.id, products.name, products.price, products.image_url, categories.name AS category_name 
+    SELECT products.id, products.name, products.price, products.image_url, products.category_id, categories.name AS category_name 
     FROM products 
     JOIN categories ON products.category_id = categories.id
   `;
@@ -26,22 +26,27 @@ function addProduct({ name, price, category_id, image_url }, callback) {
   );
 }
 
-// Обновление информации о продукте в базе данных
-function updateProduct({ id, name, price, image_url, category }, callback) {
-  db.get(`SELECT id FROM categories WHERE name = ?`, [category], (err, row) => {
-    if (err || !row) {
-      callback(err || new Error('Category not found'));
-      return;
-    }
-
-    const categoryId = row.id;
-    db.run(
-      `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
-      [name, price, image_url, categoryId, id],
-      callback
-    );
-  });
+// Функция для обновления информации о продукте в базе данных
+function updateProduct({ id, name, price, image_url, category_id }, callback) {
+  db.run(
+    `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
+    [name, price, image_url, category_id, id],
+    callback
+  );
 }
+
+
+// Функция для обновления видимости продукта
+function toggleProductVisibility(productId, isHidden, callback) {
+  db.run(
+    `UPDATE products SET IsHide = ? WHERE id = ?`,
+    [isHidden, productId],
+    function (err) {
+      callback(err);
+    }
+  );
+}
+
 
 // Удаление продукта из базы данных
 function deleteProduct(id, callback) {
@@ -110,7 +115,7 @@ function deleteReport(activityType, date, callback) {
     return;
   }
 
-  db.run(`DELETE FROM ${tableName} WHERE date = ?`, [date], function(err) {
+  db.run(`DELETE FROM ${tableName} WHERE date = ?`, [date], function (err) {
     if (err) {
       callback(err);
     } else {
@@ -245,6 +250,7 @@ module.exports = {
   getProducts,
   addProduct,
   updateProduct,
+  toggleProductVisibility,
   deleteProduct,
   getCategories,
   addCategory,

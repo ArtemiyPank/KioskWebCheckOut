@@ -130,7 +130,7 @@ async function saveReport() {
       if (!replace) {
         return; // Пользователь решил не заменять отчет
       }
-      
+
       // Удаление существующего отчета
       const deleteSuccess = await deleteReport(activityType, date);
       if (!deleteSuccess) {

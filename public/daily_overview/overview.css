@@ -19,6 +19,7 @@ h1 {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  flex-wrap: wrap; /* Allows tabs to wrap on small screens */
 }
 
 .tab-button {
@@ -29,6 +30,8 @@ h1 {
   transition: background-color 0.3s ease;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  flex: 1; /* Equal width for all tabs */
+  text-align: center;
 }
 
 .tab-button.active, .tab-button:hover {
@@ -50,10 +53,11 @@ table {
   border-collapse: collapse;
   margin: 20px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
 }
 
 table th, table td {
-  padding: 12px;
+  padding: 8px;
   border: 1px solid #ddd;
   text-align: left;
 }
@@ -67,3 +71,220 @@ table th {
   font-weight: bold;
   background-color: #e0e0e0;
 }
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Container adjustments for mobile */
+  .container {
+    padding: 10px;
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  /* Tabs on mobile */
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 0;
+  }
+
+  /* Day separation for better readability */
+  .day-separator {
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: #e0e0e0;
+    padding: 10px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Horizontal row styling */
+  .horizontal-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .horizontal-row .product-name {
+    flex: 1;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .horizontal-row .product-value {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+
+
+
+
+
+/* Основной стиль контейнера продуктов */
+#overview-products-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
+  gap: 15px;
+  justify-items: center;
+  padding-top: 20px;
+  width: 100%;
+}
+
+/* Стили для карточки продукта */
+.product {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  max-width: 100%; /* Заполняет всю ширину в рамках сетки */
+}
+
+.product:hover {
+  transform: scale(1.02);
+}
+
+/* Стиль изображения продукта */
+.product img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Информация о продукте */
+.product-info {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.product-info h2 {
+  margin: 10px;
+}
+
+/* Контейнер для кнопок управления продуктами */
+.edit-btn-container {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.edit-btn-container button {
+  flex: 1;
+  padding: 5px 0;
+  font-size: 14px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-btn-container button:nth-child(1) {
+  background-color: #28a745; /* Зеленая кнопка "Редактировать" */
+}
+
+.edit-btn-container button:nth-child(2) {
+  background-color: #dc3545; /* Красная кнопка "Удалить" */
+}
+
+.edit-btn-container button:hover {
+  opacity: 0.8;
+}
+
+/* Отдельный стиль для кнопки "Hide", размещаем ниже */
+.hide-btn-container {
+  margin-top: 5px;
+}
+
+.hide-btn-container button {
+  width: 100%;
+  padding: 5px 0;
+  font-size: 14px;
+  color: #fff;
+  background-color: #6c757d; /* Серая кнопка "Скрыть" */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.hide-btn-container button:hover {
+  opacity: 0.8;
+}
+
+/* Фильтр категорий */
+.filter_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.filter_container label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.filter_container input[type="radio"] {
+  margin-right: 5px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  #overview-products-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Обеспечивает минимум два продукта на мобильных устройствах */
+  }
+
+  .product {
+    max-width: 100%;
+  }
+
+  .edit-btn-container {
+    flex-direction: row;
+  }
+}
+
+
+/* Стили для кнопки "Add New Product" */
+#add-new-product-button {
+  width: 100%; /* Во всю ширину контейнера */
+  padding: 8px; /* Тонкая кнопка */
+  font-size: 16px;
+  color: #333; 
+  background-color: #ddd; 
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+}
+
+#add-new-product-button:hover {
+  background-color: #999; /* Более темный серый при наведении */
+  color: #111;
+}
+
+
+/* Стили для скрытого продукта */
+.product.hidden {
+  background-color: #e0e0e0; /* Светло-серый фон для скрытых продуктов */
+  opacity: 0.6; /* Полупрозрачный вид */
+}
+
+.product.hidden img {
+  filter: grayscale(100%); /* Черно-белое изображение для скрытых продуктов */
+}
+
+

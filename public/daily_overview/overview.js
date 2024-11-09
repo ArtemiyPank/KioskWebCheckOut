@@ -16,17 +16,29 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSalesData('delivery_all_sales', 'delivery-all-sales-table');
   loadSalesData('delivery_own_sales', 'delivery-own-sales-table');
   loadPricesData();
-  loadProductsData();
+  // loadProductsData();
+  loadOverviewCategories(); // Загрузка категорий для фильтра
+  loadOverviewProducts(); // Загрузка продуктов для вкладки
   loadCategoriesData();
   loadRevenueData();
 });
+
+function isMobile() {
+  return window.innerWidth <= 768;
+}
 
 // Функция загрузки данных о продажах
 async function loadSalesData(tableName, containerId) {
   try {
     const response = await fetch(`/api/sales-data/${tableName}`);
     const salesData = await response.json();
-    renderSalesTable(containerId, salesData, tableName.replace('_', ' '));
+
+    // Проверка на мобильное устройство
+    if (isMobile()) {
+      renderHorizontalRows(containerId, salesData, tableName.replace('_', ' '));
+    } else {
+      renderSalesTable(containerId, salesData, tableName.replace('_', ' '));
+    }
   } catch (error) {
     console.error(`Error loading ${tableName} data:`, error);
   }
@@ -37,20 +49,56 @@ async function loadPricesData() {
   try {
     const response = await fetch('/api/prices-data');
     const pricesData = await response.json();
-    renderPricesTable('prices-table', pricesData, 'Prices Data');
+
+    // Проверка на мобильное устройство
+    if (isMobile()) {
+      renderHorizontalRows('prices-table', pricesData, 'Prices Data');
+    } else {
+      renderPricesTable('prices-table', pricesData, 'Prices Data');
+    }
   } catch (error) {
     console.error("Error loading prices data:", error);
   }
 }
 
-// Функция загрузки данных о продуктах
-async function loadProductsData() {
+async function loadOverviewCategories() {
+  try {
+    const response = await fetch('/api/categories');
+    const categories = await response.json();
+    const categoryFilter = document.getElementById('overview-category-filter');
+
+    // Очищаем и добавляем категории в фильтр
+    categoryFilter.innerHTML = `
+      <label>
+        <input type="radio" name="overview-category" value="all" checked>
+        All
+      </label>
+    `;
+
+    categories.forEach(cat => {
+      const label = document.createElement('label');
+      label.innerHTML = `
+        <input type="radio" name="overview-category" value="${cat.name}">
+        ${cat.name}
+      `;
+      categoryFilter.appendChild(label);
+    });
+
+    categoryFilter.addEventListener('change', filterOverviewProductsByCategory);
+  } catch (error) {
+    console.error("Error loading categories:", error);
+  }
+}
+
+
+// Загрузка продуктов для вкладки Products
+async function loadOverviewProducts() {
   try {
     const response = await fetch('/api/products');
-    const productsData = await response.json();
-    renderProductsTable('products-table', productsData);
+    const products = await response.json();
+    displayOverviewProducts(products);
   } catch (error) {
-    console.error("Error loading products data:", error);
+    console.error("Error loading products:", error);
   }
 }
 
@@ -94,18 +142,22 @@ function renderSalesTable(containerId, data, title) {
   `;
 
   const tbody = document.createElement('tbody');
-  Object.keys(data).forEach(date => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${date}</td>
-      ${headers.map(product => `<td>${data[date][product] || '-'}</td>`).join('')}
-    `;
-    tbody.appendChild(row);
-  });
+  Object.keys(data)
+    .sort((a, b) => new Date(b) - new Date(a)) // Сортировка дат в порядке убывания
+    .forEach(date => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td data-label="Date">${date}</td>
+        ${headers.map(product => `<td data-label="${product}">${data[date][product] || '-'}</td>`).join('')}
+      `;
+      tbody.appendChild(row);
+    });
 
   table.appendChild(tbody);
   container.appendChild(table);
 }
+
+
 
 // Функция отображения таблицы цен
 function renderPricesTable(containerId, data, title) {
@@ -125,50 +177,68 @@ function renderPricesTable(containerId, data, title) {
   `;
 
   const tbody = document.createElement('tbody');
-  Object.keys(data).forEach(date => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${date}</td>
-      ${headers.map(product => `<td>${data[date][product] || '-'}</td>`).join('')}
-    `;
-    tbody.appendChild(row);
-  });
+  Object.keys(data)
+    .sort((a, b) => new Date(b) - new Date(a)) // Сортировка дат в порядке убывания
+    .forEach(date => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${date}</td>
+        ${headers.map(product => `<td>${data[date][product] || '-'}</td>`).join('')}
+      `;
+      tbody.appendChild(row);
+    });
 
   table.appendChild(tbody);
   container.appendChild(table);
 }
 
-// Функция отображения таблицы продуктов
-function renderProductsTable(containerId, data) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = `<h2>Products</h2>`;
 
-  const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Product Name</th>
-        <th>Category</th>
-        <th>Price</th>
-        <th>Image URL</th>
-      </tr>
-    </thead>
-  `;
+// Отображение продуктов на вкладке Products
+function displayOverviewProducts(products) {
+  const container = document.getElementById('overview-products-container');
+  container.innerHTML = ''; // Очищаем контейнер
 
-  const tbody = document.createElement('tbody');
-  data.forEach(item => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${item.name}</td>
-      <td>${item.category_name}</td>
-      <td>${item.price} ₪</td>
-      <td><a href="${item.image_url}" target="_blank">Image</a></td>
+  products.forEach(product => {
+    const productElement = document.createElement('div');
+    productElement.classList.add('product');
+    productElement.setAttribute('data-id', product.id);
+    productElement.setAttribute('data-category', product.category_name);
+    productElement.setAttribute('data-category-id', product.category_id);
+
+    // Если продукт скрыт, добавляем класс "hidden"
+    if (product.IsHide) {
+      productElement.classList.add('hidden');
+    }
+
+    productElement.innerHTML = `
+      <img src="${product.image_url}" alt="${product.name}">
+      <div class="product-info">
+        <h2>${product.name}</h2>
+        <p>Price: ${product.price} ₪</p>
+      </div>
+      <div class="edit-btn-container">
+        <button onclick="editProduct('${product.id}')">Edit</button>
+        <button onclick="deleteProduct('${product.id}')">Delete</button>
+      </div>
+      <div class="hide-btn-container">
+        <button onclick="toggleProductVisibility('${product.id}')">${product.IsHide ? 'Show' : 'Hide'}</button>
+      </div>
     `;
-    tbody.appendChild(row);
-  });
 
-  table.appendChild(tbody);
-  container.appendChild(table);
+    container.appendChild(productElement);
+  });
+}
+
+
+// Фильтрация продуктов по категориям
+function filterOverviewProductsByCategory() {
+  const selectedCategory = document.querySelector('input[name="overview-category"]:checked').value;
+  const products = document.querySelectorAll('#overview-products-container .product');
+
+  products.forEach(product => {
+    const productCategory = product.getAttribute('data-category');
+    product.style.display = (selectedCategory === 'all' || productCategory === selectedCategory) ? 'block' : 'none';
+  });
 }
 
 // Функция отображения таблицы выручки
@@ -187,18 +257,53 @@ function renderRevenueTable(containerId, data) {
   `;
 
   const tbody = document.createElement('tbody');
-  data.forEach(item => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${item.date}</td>
-      <td>${item.total_revenue} ₪</td>
-    `;
-    tbody.appendChild(row);
-  });
+  data
+    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Сортировка дат в порядке убывания
+    .forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.date}</td>
+        <td>${item.total_revenue} ₪</td>
+      `;
+      tbody.appendChild(row);
+    });
 
   table.appendChild(tbody);
   container.appendChild(table);
 }
+
+
+function renderHorizontalRows(containerId, data, title) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = `<h2>${title}</h2>`;
+
+  Object.keys(data)
+    .sort((a, b) => new Date(b) - new Date(a)) // Сортировка дат в порядке убывания
+    .forEach(date => {
+      const daySeparator = document.createElement('div');
+      daySeparator.classList.add('day-separator');
+      daySeparator.textContent = date;
+      container.appendChild(daySeparator);
+
+      Object.entries(data[date]).forEach(([productName, value]) => {
+        const row = document.createElement('div');
+        row.classList.add('horizontal-row');
+
+        const productNameEl = document.createElement('div');
+        productNameEl.classList.add('product-name');
+        productNameEl.textContent = productName;
+
+        const productValueEl = document.createElement('div');
+        productValueEl.classList.add('product-value');
+        productValueEl.textContent = value || '-';
+
+        row.appendChild(productNameEl);
+        row.appendChild(productValueEl);
+        container.appendChild(row);
+      });
+    });
+}
+
 
 // Функция для отображения списка таблиц (для категорий и других списков)
 function renderListTable(containerId, data, title) {
@@ -225,4 +330,23 @@ function renderListTable(containerId, data, title) {
 
   table.appendChild(tbody);
   container.appendChild(table);
+}
+
+
+
+
+// Функции для кнопок управления продуктами
+function editProduct(id) {
+  console.log("Editing product with ID:", id);
+  // Логика редактирования продукта
+}
+
+function deleteProduct(id) {
+  console.log("Deleting product with ID:", id);
+  // Логика удаления продукта
+}
+
+function toggleProductVisibility(id) {
+  console.log("Toggling visibility for product with ID:", id);
+  // Логика скрытия продукта
 }

@@ -44,6 +44,26 @@ app.put('/api/products/:id', (req, res) => {
   });
 });
 
+
+// Эндпоинт для скрытия или показа продукта
+app.put('/api/products/:id/toggle-visibility', (req, res) => {
+  const { id } = req.params;
+  const { isHidden } = req.body;
+
+  if (typeof isHidden !== 'number' || (isHidden !== 0 && isHidden !== 1)) {
+    return res.status(400).send('Invalid value for isHidden. Must be 0 or 1.');
+  }
+
+  db.toggleProductVisibility(id, isHidden, (err) => {
+    if (err) {
+      console.error("Error updating product visibility:", err.message);
+      res.status(500).send('Error updating product visibility');
+    } else {
+      res.status(200).send('Product visibility updated successfully');
+    }
+  });
+});
+
 // Удаление продукта
 app.delete('/api/products/:id', (req, res) => {
   db.deleteProduct(req.params.id, function (err) {
@@ -109,7 +129,7 @@ app.post('/api/save-report', (req, res) => {
       } else {
         res.status(201).send('Report and prices saved successfully');
       }
-    });  
+    });
   });
 });
 
