@@ -132,11 +132,10 @@ async function saveReport() {
       }
       
       // Удаление существующего отчета
-      const deleteResponse = await fetch(`/api/delete-report?activityType=${activityType}&date=${date}`, {
-        method: 'DELETE'
-      });
-      if (!deleteResponse.ok) {
-        throw new Error('Failed to delete existing report');
+      const deleteSuccess = await deleteReport(activityType, date);
+      if (!deleteSuccess) {
+        alert("Failed to delete existing report.");
+        return;
       }
     }
 
@@ -162,3 +161,26 @@ async function saveReport() {
     alert('An error occurred while saving the report. Please try again.');
   }
 }
+
+
+async function deleteReport(activityType, date) {
+  try {
+    console.log("Attempting to delete report with:", { activityType, date });
+    const response = await fetch(`/api/delete-report?activityType=${activityType}&date=${date}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Server response error:", errorText);
+      throw new Error("Failed to delete existing report");
+    }
+
+    console.log("Report deleted successfully");
+    return true;
+  } catch (error) {
+    console.error("Error deleting report:", error);
+    return false;
+  }
+}
+

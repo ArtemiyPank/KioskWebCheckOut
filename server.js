@@ -8,6 +8,7 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Получение списка продуктов
 app.get('/api/products', (req, res) => {
   db.getProducts((err, rows) => {
     if (err) {
@@ -19,6 +20,7 @@ app.get('/api/products', (req, res) => {
   });
 });
 
+// Добавление нового продукта
 app.post('/api/products', (req, res) => {
   db.addProduct(req.body, function (err) {
     if (err) {
@@ -30,6 +32,7 @@ app.post('/api/products', (req, res) => {
   });
 });
 
+// Обновление информации о продукте
 app.put('/api/products/:id', (req, res) => {
   db.updateProduct({ ...req.body, id: req.params.id }, (err) => {
     if (err) {
@@ -41,6 +44,7 @@ app.put('/api/products/:id', (req, res) => {
   });
 });
 
+// Удаление продукта
 app.delete('/api/products/:id', (req, res) => {
   db.deleteProduct(req.params.id, function (err) {
     if (err) {
@@ -52,6 +56,7 @@ app.delete('/api/products/:id', (req, res) => {
   });
 });
 
+// Получение списка категорий
 app.get('/api/categories', (req, res) => {
   db.getCategories((err, rows) => {
     if (err) {
@@ -63,6 +68,7 @@ app.get('/api/categories', (req, res) => {
   });
 });
 
+// Добавление новой категории
 app.post('/api/categories', (req, res) => {
   db.addCategory(req.body.name, function (err) {
     if (err) {
@@ -74,6 +80,7 @@ app.post('/api/categories', (req, res) => {
   });
 });
 
+// Проверка существования отчета
 app.get('/api/check-report', (req, res) => {
   db.checkReport(req.query.activityType, req.query.date, (err, row) => {
     if (err) {
@@ -85,13 +92,97 @@ app.get('/api/check-report', (req, res) => {
   });
 });
 
+// Сохранение отчета и цен на товары
 app.post('/api/save-report', (req, res) => {
-  db.saveReport(req.body.activityType, req.body.date, req.body.products, (err) => {
+  const { activityType, date, products } = req.body;
+
+  db.savePricesForDate(date, (err) => {
     if (err) {
-      console.error(err.message);
-      res.status(500).send('Error saving report');
+      res.status(500).send('Error saving prices');
+      return;
+    }
+
+    db.saveReport(activityType, date, products, (err) => {
+      if (err) {
+        console.error("Error saving report:", err.message);
+        res.status(500).send('Error saving report');
+      } else {
+        res.status(201).send('Report and prices saved successfully');
+      }
+    });  
+  });
+});
+
+// Удаление отчета
+app.delete('/api/delete-report', (req, res) => {
+  const { activityType, date } = req.query;
+
+  db.deleteReport(activityType, date, (err, result) => {
+    if (err) {
+      console.error("Error deleting report:", err.message);
+      res.status(500).send("Error deleting report");
     } else {
-      res.status(201).send('Report and prices saved successfully');
+      res.status(200).send(result.message);
+    }
+  });
+});
+
+// Получение данных о продажах для in_store_sales
+app.get('/api/sales-data/in_store_sales', (req, res) => {
+  db.getSalesDataForTable('in_store_sales', (err, data) => {
+    if (err) {
+      console.error("Error in receiving sales data in_store_sales:", err.message);
+      res.status(500).send("Error in receiving sales data");
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// Получение данных о продажах для delivery_all_sales
+app.get('/api/sales-data/delivery_all_sales', (req, res) => {
+  db.getSalesDataForTable('delivery_all_sales', (err, data) => {
+    if (err) {
+      console.error("Error in receiving sales data delivery_all_sales:", err.message);
+      res.status(500).send("Error in receiving sales data");
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// Получение данных о продажах для delivery_own_sales
+app.get('/api/sales-data/delivery_own_sales', (req, res) => {
+  db.getSalesDataForTable('delivery_own_sales', (err, data) => {
+    if (err) {
+      console.error("Error in receiving sales data delivery_own_sales:", err.message);
+      res.status(500).send("Error in receiving sales data");
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// Получение данных о ценах
+app.get('/api/prices-data', (req, res) => {
+  db.getPricesDataFormatted((err, data) => {
+    if (err) {
+      console.error("Error in obtaining price data:", err.message);
+      res.status(500).send("Error in obtaining price data");
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// Получение данных о выручке по дате
+app.get('/api/revenue-data', (req, res) => {
+  db.getRevenueByDate((err, rows) => {
+    if (err) {
+      console.error("Error when receiving revenue data:", err.message);
+      res.status(500).send("Error when receiving revenue data");
+    } else {
+      res.json(rows);
     }
   });
 });

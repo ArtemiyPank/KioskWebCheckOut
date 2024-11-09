@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Overview</title>
+  <link rel="stylesheet" href="overview.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Daily Overview</h1>
+
+    <!-- Tabs for each table -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="openTab(event, 'in-store-sales')">In-Store Sales</button>
+      <button class="tab-button" onclick="openTab(event, 'delivery-all-sales')">Delivery for All</button>
+      <button class="tab-button" onclick="openTab(event, 'delivery-own-sales')">Delivery for Own</button>
+      <button class="tab-button" onclick="openTab(event, 'prices')">Prices</button>
+      <button class="tab-button" onclick="openTab(event, 'products')">Products</button>
+      <button class="tab-button" onclick="openTab(event, 'categories')">Categories</button>
+      <button class="tab-button" onclick="openTab(event, 'revenue')">Revenue</button>
+    </div>
+
+    <!-- Content for each tab -->
+    <div id="in-store-sales" class="tab-content active">
+      <div id="in-store-sales-table"></div>
+    </div>
+    <div id="delivery-all-sales" class="tab-content">
+      <div id="delivery-all-sales-table"></div>
+    </div>
+    <div id="delivery-own-sales" class="tab-content">
+      <div id="delivery-own-sales-table"></div>
+    </div>
+    <div id="prices" class="tab-content">
+      <div id="prices-table"></div>
+    </div>
+    <div id="products" class="tab-content">
+      <div id="products-table"></div>
+    </div>
+    <div id="categories" class="tab-content">
+      <div id="categories-table"></div>
+    </div>
+    <div id="revenue" class="tab-content">
+      <div id="revenue-table"></div>
+    </div>
+  </div>
+
+  <script src="overview.js"></script>
+</body>
+</html>
