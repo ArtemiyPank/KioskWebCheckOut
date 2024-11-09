@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Overview</title>
-  <link rel="stylesheet" href="../other css/popup_window.css">
+  <title>Overview</title>
   <link rel="stylesheet" href="overview.css">
+  <link rel="stylesheet" href="../other css/popup_window.css">
 </head>
 
 <body>
@@ -49,11 +49,11 @@
       <!-- Кнопка для добавления нового товара -->
       <button id="add-new-product-button" onclick="openAddProductModal()">Add New Product</button>
 
-
       <!-- Контейнер для отображения продуктов -->
       <div id="overview-products-container"></div>
     </div>
     <div id="categories" class="tab-content">
+      <button id="add-new-category-button" onclick="openAddCategoryModal()">Add New Category</button>
       <div id="categories-table"></div>
     </div>
     <div id="revenue" class="tab-content">
@@ -77,6 +77,18 @@
         <!-- Опции категорий будут загружены через JavaScript -->
       </select>
       <button id="save-changes-button">Save Changes</button>
+    </div>
+  </div>
+
+    <!-- Модальное окно для добавления новой категории -->
+    <div id="add-category-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeAddCategoryModal()">&times;</span>
+        <h2>Add New Category</h2>
+        <label for="category-name">Category Name:</label>
+        <input type="text" id="category-name" required>
+        <button id="save-category-button">Save Category</button>
+      </div>
     </div>
 
     <script src="overview.js"></script>

@@ -258,7 +258,7 @@ table th {
 
 
 /* Стили для кнопки "Add New Product" */
-#add-new-product-button {
+#add-new-product-button, #add-new-category-button {
   width: 100%; /* Во всю ширину контейнера */
   padding: 8px; /* Тонкая кнопка */
   font-size: 16px;
@@ -271,10 +271,12 @@ table th {
 
 }
 
-#add-new-product-button:hover {
+#add-new-product-button:hover, #add-new-category-button:hover {
   background-color: #999; /* Более темный серый при наведении */
   color: #111;
 }
+
+
 
 
 /* Стили для скрытого продукта */
@@ -286,5 +288,8 @@ table th {
 .product.hidden img {
   filter: grayscale(100%); /* Черно-белое изображение для скрытых продуктов */
 }
+
+
+
 
 

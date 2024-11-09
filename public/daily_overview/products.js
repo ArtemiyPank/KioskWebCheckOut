@@ -184,8 +184,6 @@ document.getElementById('save-changes-button').addEventListener('click', async (
     }
 });
 
-
-
 // Закрытие модального окна при клике вне его
 window.onclick = function (event) {
     const modal = document.getElementById('edit-product-modal');
@@ -193,3 +191,48 @@ window.onclick = function (event) {
         closeEditModal();
     }
 };
+
+
+
+
+
+
+// Открытие модального окна для добавления новой категории
+function openAddCategoryModal() {
+    document.getElementById('add-category-modal').style.display = 'block';
+}
+
+// Закрытие модального окна для добавления новой категории
+function closeAddCategoryModal() {
+    document.getElementById('add-category-modal').style.display = 'none';
+}
+
+
+// Обработчик для кнопки сохранения новой категории
+document.getElementById('save-category-button').addEventListener('click', async () => {
+    const categoryName = document.getElementById('category-name').value.trim();
+
+    if (!categoryName) {
+        alert("Please enter a category name.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: categoryName })
+        });
+
+        if (!response.ok) throw new Error("Failed to add category.");
+
+        alert("Category added successfully!");
+        closeAddCategoryModal();
+        loadCategoriesData(); // Обновить список категорий после добавления
+    } catch (error) {
+        console.error("Error adding category:", error);
+        alert("An error occurred while adding the category.");
+    }
+});

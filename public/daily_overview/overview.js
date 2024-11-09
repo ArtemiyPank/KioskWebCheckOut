@@ -350,3 +350,4 @@ function toggleProductVisibility(id) {
   console.log("Toggling visibility for product with ID:", id);
   // Логика скрытия продукта
 }
+
