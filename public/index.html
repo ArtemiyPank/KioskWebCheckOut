@@ -12,14 +12,14 @@
 
 <body>
   <div class="container">
-    <div class="navigation">
-      <a href="index.html" class="nav-button">Home</a>
-      <a href="add/add_product.html" class="nav-button">Add Product</a>
-      <a href="report/report.html" class="nav-button nav-button-secondary">Report</a>
+    <div class="header-flex">
+      <h1>Product List</h1>
+      <div class="navigation">
+        <a href="index.html" class="nav-button">Product List</a>
+        <a href="report/report.html" class="nav-button nav-button-secondary">Report</a>
+      </div>
     </div>
-
-    <h1>Product List</h1>
-
+    
     <!-- Контейнер для радиокнопок категорий -->
     <div id="category-filter" class="filter_container">
       <label>
@@ -28,31 +28,11 @@
       </label>
       <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
     </div>
-
+  
     <!-- Контейнер для списка товаров -->
     <div id="products-container"></div>
   </div>
-
-
-  <div id="edit-product-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-button" onclick="closeEditModal()">&times;</span>
-      <h2>Edit Product</h2>
-      <label for="edit-name">Name:</label>
-      <input type="text" id="edit-name" required>
-      <label for="edit-price">Price (₪):</label>
-      <input type="number" id="edit-price" required>
-      <label for="edit-image-url">Image URL:</label>
-      <input type="text" id="edit-image-url" required>
-      <label for="edit-category">Category:</label>
-      <select id="edit-category" required>
-        <!-- Опции категорий будут загружены через JavaScript -->
-      </select>
-      <button id="save-changes-button">Save Changes</button>
-    </div>
-  </div>
-
-
+  
 
   <script src="index.js"></script>
 

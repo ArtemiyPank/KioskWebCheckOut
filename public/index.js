@@ -80,11 +80,6 @@ function displayProducts(products, cachedCounters) {
           <span id="counter-${product.id}" class="counter">${count}</span>
           <button onclick="updateCounter(${product.id}, 1, '${product.name}', ${product.price})">+</button>
         </div>
-
-        <div class="edit-btn-container">
-          <button onclick="editProduct(${product.id})">Edit</button>
-          <button onclick="deleteProduct(${product.id})">Delete</button>
-        </div>
       </div>
     `;
 
@@ -118,102 +113,6 @@ function updateCounter(productId, change, productName, productPrice) {
   counterElement.innerText = count;
 
   saveSalesDataToLocalStorage(productId, productName, productPrice, count);
-}
-
-let currentProductId;
-
-async function editProduct(productId) {
-
-  const response = await fetch('/api/categories');
-  if (!response.ok) throw new Error("Failed to fetch categories");
-
-  const categories = await response.json();
-  const categorySelect = document.getElementById('edit-category');
-  categorySelect.innerHTML = '';
-
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category.name;
-    option.textContent = category.name;
-    categorySelect.appendChild(option);
-  });
-
-  currentProductId = productId;
-  const product = document.querySelector(`.product[data-id="${productId}"]`);
-  const name = product.querySelector('h2').innerText;
-  const price = parseFloat(product.querySelector('.product-info p').innerText.replace('Price: ', '').replace('₪', ''));
-  const imageUrl = product.querySelector('img').src;
-  const category = product.getAttribute('data-category');
-
-  document.getElementById('edit-name').value = name;
-  document.getElementById('edit-price').value = price;
-  document.getElementById('edit-image-url').value = imageUrl;
-  document.getElementById('edit-category').value = category;
-
-  openEditModal();
-}
-
-async function deleteProduct(productId) {
-  if (!confirm("Are you sure you want to delete this product?")) return;
-
-  try {
-    const response = await fetch(`/api/products/${productId}`, {
-      method: 'DELETE'
-    });
-
-    if (!response.ok) throw new Error(`Failed to delete product: ${response.status} ${response.statusText}`);
-    alert("Product deleted successfully!");
-    loadProducts(); // Перезагрузка списка продуктов после удаления
-  } catch (error) {
-    console.error("Error deleting product:", error);
-    alert(`Error deleting product: ${error.message}`);
-  }
-}
-
-function openEditModal() {
-  document.getElementById('edit-product-modal').style.display = 'block';
-}
-
-function closeEditModal() {
-  document.getElementById('edit-product-modal').style.display = 'none';
-}
-
-document.getElementById('save-changes-button').addEventListener('click', async () => {
-  const newName = document.getElementById('edit-name').value;
-  const newPrice = parseFloat(document.getElementById('edit-price').value);
-  const newImageUrl = document.getElementById('edit-image-url').value;
-  const newCategory = document.getElementById('edit-category').value;
-
-  if (!newName || isNaN(newPrice) || !newImageUrl || !newCategory) {
-    alert("Please fill in all fields.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/products/${currentProductId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: newName, price: newPrice, image_url: newImageUrl, category: newCategory })
-    });
-
-    if (!response.ok) throw new Error(`Failed to edit product: ${response.status} ${response.statusText}`);
-    alert("Product updated successfully!");
-    closeEditModal();
-    loadProducts();
-  } catch (error) {
-    console.error("Error editing product:", error);
-    alert(`Error editing product: ${error.message}`);
-  }
-});
-
-// Закрытие модального окна при клике вне его
-window.onclick = function (event) {
-  const modal = document.getElementById('edit-product-modal');
-  if (event.target === modal) {
-    closeEditModal();
-  }
 }
 
 

@@ -83,33 +83,6 @@ h1 {
   text-align: center;
 }
 
-/* Контейнер для кнопок изменения и удаления */
-.edit-btn-container {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  margin-top: 15px;
-}
-
-.edit-btn-container button {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.edit-btn-container button:nth-child(2) {
-  background-color: #dc3545;
-}
-
-.edit-btn-container button:hover {
-  opacity: 0.9;
-}
 
 .filter_container{
   display: flex;
@@ -119,7 +92,7 @@ h1 {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
   h1 {
-    font-size: 20px;
+    margin: 5px;
   }
 
   .container {

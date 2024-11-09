@@ -6,25 +6,27 @@
   <title>Sales Report</title>
   <link rel="stylesheet" href="../other css/navigation.css">
   <link rel="stylesheet" href="report.css">
-
 </head>
 <body>
   <div class="container">
-    <div class="navigation">
-      <a href="../index.html" class="nav-button">Home</a>
-      <a href="../add/add_product.html" class="nav-button">Add Product</a>
-      <a href="report.html" class="nav-button nav-button-secondary">Report</a>
+    <div class="header-flex">
+      <h1>Product List</h1>
+      <div class="navigation">
+        <a href="../index.html" class="nav-button">Product List</a>
+        <a href="report/report.html" class="nav-button nav-button-secondary">Report</a>
+      </div>
     </div>
 
-    <div class="container">
-      <h2>Sales Report</h2>
+    <!-- Основное содержимое -->
+    <div class="content">
       <div id="sales-report"></div>
-      
+
       <!-- Кнопки для копирования и сброса -->
       <button id="copy-report">Copy Report</button>
       <button id="reset-counters">Reset Counters</button>
     </div>
 
+    <!-- Блок для сохранения отчета -->
     <div>
       <h3>Save Report</h3>
       <select id="activity-type">
@@ -34,7 +36,7 @@
       </select>
       <button onclick="saveReport()">Save Report</button>
     </div>
-    
+  </div>
 
   <script src="report.js"></script>
 </body>
