@@ -286,23 +286,27 @@ function renderHorizontalRows(containerId, data, title) {
       container.appendChild(daySeparator);
 
       Object.entries(data[date]).forEach(([productName, value]) => {
-        const row = document.createElement('div');
-        row.classList.add('horizontal-row');
+        // Проверяем, были ли продажи (value > 0) перед отображением строки
+        if (value > 0) {
+          const row = document.createElement('div');
+          row.classList.add('horizontal-row');
 
-        const productNameEl = document.createElement('div');
-        productNameEl.classList.add('product-name');
-        productNameEl.textContent = productName;
+          const productNameEl = document.createElement('div');
+          productNameEl.classList.add('product-name');
+          productNameEl.textContent = productName;
 
-        const productValueEl = document.createElement('div');
-        productValueEl.classList.add('product-value');
-        productValueEl.textContent = value || '-';
+          const productValueEl = document.createElement('div');
+          productValueEl.classList.add('product-value');
+          productValueEl.textContent = value;
 
-        row.appendChild(productNameEl);
-        row.appendChild(productValueEl);
-        container.appendChild(row);
+          row.appendChild(productNameEl);
+          row.appendChild(productValueEl);
+          container.appendChild(row);
+        }
       });
     });
 }
+
 
 
 // Функция для отображения списка таблиц (для категорий и других списков)

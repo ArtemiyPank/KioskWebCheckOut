@@ -1,6 +1,6 @@
 /* Container */
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -16,6 +16,7 @@ h1 {
 
 /* Tabs navigation */
 .tabs {
+  max-width: 900;
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -291,5 +292,65 @@ table th {
 
 
 
+/* Ограничение ширины таблицы */
+table {
+  width: 100%;
+  max-width: 100%; /* Ограничивает таблицу шириной контейнера */
+  overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
+  display: block; /* Позволяет прокрутку на мобильных */
+  border-collapse: collapse;
+  margin: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+table th, table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+  white-space: nowrap; /* Запрещает перенос текста */
+}
+
+table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+/* Стиль для разделителя дня на мобильных */
+@media (max-width: 768px) {
+  .day-separator {
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: #e0e0e0;
+    padding: 10px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Установка горизонтальной прокрутки для таблицы на мобильных */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .horizontal-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .horizontal-row .product-name {
+    flex: 1;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .horizontal-row .product-value {
+    flex: 1;
+    text-align: center;
+  }
+}
 
 
