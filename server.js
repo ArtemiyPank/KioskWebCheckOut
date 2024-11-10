@@ -209,4 +209,6 @@ app.get('/api/revenue-data', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Page for products: http://localhost:${PORT}/products/index.html`)
+  console.log(`Page for overview: http://localhost:${PORT}/daily_overview/daily_overview.html`)
 });

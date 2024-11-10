@@ -9,12 +9,8 @@ async function loadCategories() {
     if (!response.ok) throw new Error("Failed to fetch categories");
 
     const categories = await response.json();
-
-
-    console.log(categories);
     localStorage.setItem('categories', categories);
 
-    // const categories = await response.json();
     const categoryFilter = document.getElementById('category-filter');
 
     // Очистка существующих элементов перед добавлением новых
@@ -63,28 +59,30 @@ function displayProducts(products, cachedCounters) {
   products.forEach(product => {
     const count = cachedCounters[product.id]?.soldToday || 0;
 
-    const productElement = document.createElement('div');
-    productElement.classList.add('product');
-    productElement.setAttribute('data-id', product.id);
-    productElement.setAttribute('data-category', product.category_name);
-    productElement.setAttribute('data-category-id', product.category_id);
+    if(product.IsHide != 1 || count != 0){
+      const productElement = document.createElement('div');
+      productElement.classList.add('product');
+      productElement.setAttribute('data-id', product.id);
+      productElement.setAttribute('data-category', product.category_name);
+      productElement.setAttribute('data-category-id', product.category_id);
 
-    productElement.innerHTML = `
-      <img src="${product.image_url}" alt="${product.name}">
-      <div class="product-info">
-        <h2>${product.name}</h2>
-        <p>Price: ${product.price} ₪</p>
-      </div>
-      <div class="product-controls">
-        <div class="counter-container">
-          <button onclick="updateCounter(${product.id}, -1, '${product.name}', ${product.price})">-</button>
-          <span id="counter-${product.id}" class="counter">${count}</span>
-          <button onclick="updateCounter(${product.id}, 1, '${product.name}', ${product.price})">+</button>
+      productElement.innerHTML = `
+        <img src="${product.image_url}" alt="${product.name}">
+        <div class="product-info">
+          <h2>${product.name}</h2>
+          <p>Price: ${product.price} ₪</p>
         </div>
-      </div>
-    `;
+        <div class="product-controls">
+          <div class="counter-container">
+            <button onclick="updateCounter(${product.id}, -1, '${product.name}', ${product.price})">-</button>
+            <span id="counter-${product.id}" class="counter">${count}</span>
+            <button onclick="updateCounter(${product.id}, 1, '${product.name}', ${product.price})">+</button>
+          </div>
+        </div>
+      `;
 
-    container.appendChild(productElement);
+      container.appendChild(productElement);
+    }
   });
 
   filterProductsByCategory(); // Применяем фильтр категорий после отображения

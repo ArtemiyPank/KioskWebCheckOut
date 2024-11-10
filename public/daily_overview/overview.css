@@ -131,7 +131,7 @@ table th {
 /* Основной стиль контейнера продуктов */
 #overview-products-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
   gap: 15px;
   justify-items: center;
   padding-top: 20px;
@@ -181,7 +181,7 @@ table th {
 
 .edit-btn-container button {
   flex: 1;
-  padding: 5px 0;
+  padding: 7px 0;
   font-size: 14px;
   color: #fff;
   border: none;

@@ -10,7 +10,7 @@ const db = new sqlite3.Database('./data/kiosk.db', (err) => {
 // Получение списка всех продуктов с названием категории
 function getProducts(callback) {
   const query = `
-    SELECT products.id, products.name, products.price, products.image_url, products.category_id, categories.name AS category_name 
+    SELECT products.id, products.name, products.price, products.image_url, IsHide, products.category_id, categories.name AS category_name 
     FROM products 
     JOIN categories ON products.category_id = categories.id
   `;
