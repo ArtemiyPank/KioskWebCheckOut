@@ -18,22 +18,28 @@ h1 {
 
 /* Основной стиль контейнера товаров */
 #products-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
+  gap: 15px;
+  justify-items: center;
   padding-top: 20px;
+  width: 100%;
 }
 
 /* Стили для карточки продукта */
 .product {
   border: 1px solid #ddd;
   border-radius: 8px;
-  max-width: 220px;
   padding: 10px;
   text-align: center;
   background-color: #f9f9f9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  max-width: 100%; /* Заполняет всю ширину в рамках сетки */
+}
+
+.product:hover {
+  transform: scale(1.02);
 }
 
 /* Стиль изображения продукта */
@@ -47,6 +53,11 @@ h1 {
 .product-info {
   margin-top: 10px;
   font-size: 16px;
+  font-weight: bold;
+}
+
+.product-info h2 {
+  margin: 10px;
 }
 
 /* Стили для контейнера управления количеством */
@@ -89,8 +100,17 @@ h1 {
   justify-content: space-between;
 }
 
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
+  #products-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Обеспечивает минимум два продукта на мобильных устройствах */
+  }
+
+  .product {
+    max-width: 100%;
+  }
+
   h1 {
     margin: 5px;
   }
@@ -99,24 +119,18 @@ h1 {
     padding: 8px;
   }
 
-  .product img {
-    width: 120px;
-    margin: 0;
-
-  }
-
   .counter-container button {
     width: 40px;
     font-size: 22px;
   }
 
   .product-info h2 {
-    font-size: 16px;
+    font-size: 18px;
     margin: 0;
   }
 
   .product-info p {
-    font-size: 14px;
+    font-size: 16px;
     margin: 0;
 
   }
@@ -125,3 +139,4 @@ h1 {
     font-size: 24px;
   }
 }
+
