@@ -61,24 +61,24 @@
     </div>
   </div>
 
-  <!-- Модальное окно для редактирования или добавления продукта -->
-  <div id="edit-product-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-button" onclick="closeEditModal()">&times;</span>
-      <h2 id="modal-title">Edit Product</h2>
-      <label for="edit-name">Name:</label>
-      <input type="text" id="edit-name" required>
-      <label for="edit-price">Price (₪):</label>
-      <input type="number" id="edit-price" required>
-      <label for="edit-image-url">Image URL:</label>
-      <input type="text" id="edit-image-url" required>
-      <label for="edit-category">Category:</label>
-      <select id="edit-category" required>
-        <!-- Опции категорий будут загружены через JavaScript -->
-      </select>
-      <button id="save-changes-button">Save Changes</button>
-    </div>
+<!-- Модальное окно для редактирования или добавления продукта -->
+<div id="edit-product-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeEditModal()">&times;</span>
+    <h2 id="modal-title">Edit Product</h2>
+    <label for="edit-name">Name:</label>
+    <input type="text" id="edit-name" required>
+    <label for="edit-price">Price (₪):</label>
+    <input type="number" id="edit-price" required>
+
+    <label for="edit-image-file">Upload Image:</label>
+    <input type="file" id="edit-image-file" accept="image/*">
+    <label for="edit-category">Category:</label>
+    <select id="edit-category" required></select>
+    <button id="save-changes-button">Save Changes</button>
   </div>
+</div>
+
 
     <!-- Модальное окно для добавления новой категории -->
     <div id="add-category-modal" class="modal">

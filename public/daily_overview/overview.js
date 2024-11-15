@@ -196,36 +196,30 @@ function renderPricesTable(containerId, data, title) {
 // Отображение продуктов на вкладке Products
 function displayOverviewProducts(products) {
   const container = document.getElementById('overview-products-container');
-  container.innerHTML = ''; // Очищаем контейнер
+  container.innerHTML = ''; // Очистка контейнера
 
   products.forEach(product => {
-    const productElement = document.createElement('div');
-    productElement.classList.add('product');
-    productElement.setAttribute('data-id', product.id);
-    productElement.setAttribute('data-category', product.category_name);
-    productElement.setAttribute('data-category-id', product.category_id);
+      const productElement = document.createElement('div');
+      productElement.classList.add('product');
+      productElement.setAttribute('data-id', product.id);
+      productElement.setAttribute('data-category', product.category_name);
+      productElement.setAttribute('data-category-id', product.category_id);
 
-    // Если продукт скрыт, добавляем класс "hidden"
-    if (product.IsHide) {
-      productElement.classList.add('hidden');
-    }
-
-    productElement.innerHTML = `
-      <img src="${product.image_url}" alt="${product.name}">
-      <div class="product-info">
-        <h2>${product.name}</h2>
-        <p>Price: ${product.price} ₪</p>
-      </div>
-      <div class="edit-btn-container">
-        <button onclick="editProduct('${product.id}')">Edit</button>
-        <button onclick="deleteProduct('${product.id}')">Delete</button>
-      </div>
-      <div class="hide-btn-container">
-        <button onclick="toggleProductVisibility('${product.id}')">${product.IsHide ? 'Show' : 'Hide'}</button>
-      </div>
-    `;
-
-    container.appendChild(productElement);
+      productElement.innerHTML = `
+          <img src="${product.image_url}" alt="${product.name}">
+          <div class="product-info">
+              <h2>${product.name}</h2>
+              <p>Price: ${product.price} ₪</p>
+          </div>
+          <div class="edit-btn-container">
+              <button onclick="editProduct('${product.id}')">Edit</button>
+              <button onclick="deleteProduct('${product.id}')">Delete</button>
+          </div>
+          <div class="hide-btn-container">
+              <button onclick="toggleProductVisibility('${product.id}')">${product.IsHide ? 'Show' : 'Hide'}</button>
+          </div>
+      `;
+      container.appendChild(productElement);
   });
 }
 
@@ -335,23 +329,3 @@ function renderListTable(containerId, data, title) {
   table.appendChild(tbody);
   container.appendChild(table);
 }
-
-
-
-
-// Функции для кнопок управления продуктами
-function editProduct(id) {
-  console.log("Editing product with ID:", id);
-  // Логика редактирования продукта
-}
-
-function deleteProduct(id) {
-  console.log("Deleting product with ID:", id);
-  // Логика удаления продукта
-}
-
-function toggleProductVisibility(id) {
-  console.log("Toggling visibility for product with ID:", id);
-  // Логика скрытия продукта
-}
-

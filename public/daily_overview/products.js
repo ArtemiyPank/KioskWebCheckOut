@@ -2,6 +2,26 @@ let isEditing = false; // Переменная для отслеживания �
 let currentProductId = null; // Текущий ID продукта для редактирования
 
 
+// Закрытие модального окна при клике вне его
+window.onclick = function (event) {
+    const modal = document.getElementById('edit-product-modal');
+    if (event.target === modal) {
+        closeEditModal();
+    }
+};
+
+
+// Открытие модального окна для добавления новой категории
+function openAddCategoryModal() {
+    document.getElementById('add-category-modal').style.display = 'block';
+}
+
+// Закрытие модального окна для добавления новой категории
+function closeAddCategoryModal() {
+    document.getElementById('add-category-modal').style.display = 'none';
+}
+
+
 async function openAddProductModal() {
     isEditing = false;
     currentProductId = null;
@@ -9,7 +29,6 @@ async function openAddProductModal() {
 
     document.getElementById('edit-name').value = '';
     document.getElementById('edit-price').value = '';
-    document.getElementById('edit-image-url').value = '';
 
     try {
         const response = await fetch('/api/categories');
@@ -67,7 +86,7 @@ async function editProduct(productId) {
 
         document.getElementById('edit-name').value = name;
         document.getElementById('edit-price').value = price;
-        document.getElementById('edit-image-url').value = imageUrl;
+        // document.getElementById('edit-image-url').value = imageUrl;
         document.getElementById('edit-category').value = category;
 
         openEditModal();
@@ -152,14 +171,23 @@ window.onclick = function (event) {
 
 // Сохранение изменений или добавление нового продукта
 document.getElementById('save-changes-button').addEventListener('click', async () => {
-    const name = document.getElementById('edit-name').value;
+    const name = document.getElementById('edit-name').value.trim();
     const price = parseFloat(document.getElementById('edit-price').value);
-    const imageUrl = document.getElementById('edit-image-url').value;
     const category_id = document.getElementById('edit-category').value;
+    const imageFile = document.getElementById('edit-image-file').files[0];
 
-    if (!name || isNaN(price) || !imageUrl || !category_id) {
+    if (!name || isNaN(price) || !category_id) {
         alert("Please fill in all fields.");
         return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("category_id", category_id);
+
+    if (imageFile) {
+        formData.append("image", imageFile);
     }
 
     const url = isEditing ? `/api/products/${currentProductId}` : '/api/products';
@@ -167,11 +195,8 @@ document.getElementById('save-changes-button').addEventListener('click', async (
 
     try {
         const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, price, image_url: imageUrl, category_id }) // Отправляем category_id
+            method,
+            body: formData,
         });
 
         if (!response.ok) throw new Error(`Failed to ${isEditing ? 'edit' : 'add'} product`);
@@ -183,29 +208,6 @@ document.getElementById('save-changes-button').addEventListener('click', async (
         alert(`Error ${isEditing ? 'editing' : 'adding'} product: ${error.message}`);
     }
 });
-
-// Закрытие модального окна при клике вне его
-window.onclick = function (event) {
-    const modal = document.getElementById('edit-product-modal');
-    if (event.target === modal) {
-        closeEditModal();
-    }
-};
-
-
-
-
-
-
-// Открытие модального окна для добавления новой категории
-function openAddCategoryModal() {
-    document.getElementById('add-category-modal').style.display = 'block';
-}
-
-// Закрытие модального окна для добавления новой категории
-function closeAddCategoryModal() {
-    document.getElementById('add-category-modal').style.display = 'none';
-}
 
 
 // Обработчик для кнопки сохранения новой категории

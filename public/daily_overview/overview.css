@@ -124,10 +124,6 @@ table th {
 }
 
 
-
-
-
-
 /* Основной стиль контейнера продуктов */
 #overview-products-container {
   display: grid;
@@ -248,8 +244,22 @@ table th {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Обеспечивает минимум два продукта на мобильных устройствах */
   }
 
+  h1 {
+    margin: 0 0 15px 0;
+  }
+
   .product {
     max-width: 100%;
+  }
+
+  .product-info h2 {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .product-info p {
+    font-size: 16px;
+    margin: 0;
   }
 
   .edit-btn-container {
@@ -354,3 +364,12 @@ table th {
 }
 
 
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+}
+
+.modal-content input[type="file"] {
+  margin-top: 5px;
+  font-size: 14px;
+}

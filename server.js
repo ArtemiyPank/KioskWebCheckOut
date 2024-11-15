@@ -2,6 +2,13 @@ const express = require('express');
 const path = require('path');
 const db = require('./db');
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, './public/images'),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+});
+const upload = multer({ storage });
+
 const app = express();
 const PORT = 3000;
 
@@ -20,21 +27,27 @@ app.get('/api/products', (req, res) => {
   });
 });
 
-// Добавление нового продукта
-app.post('/api/products', (req, res) => {
-  db.addProduct(req.body, function (err) {
+// Добавление нового продукта с изображением
+app.post('/api/products', upload.single('image'), (req, res) => {
+  const { name, price, category_id } = req.body;
+  const imageUrl = req.file ? `/images/${req.file.filename}` : null;
+
+  db.addProduct({ name, price, category_id, image_url: imageUrl }, function (err) {
     if (err) {
       console.error(err.message);
       res.status(500).send('Error adding product');
     } else {
-      res.status(201).json({ id: this.lastID, ...req.body });
+      res.status(201).json({ id: this.lastID, name, price, category_id, image_url: imageUrl });
     }
   });
 });
 
-// Обновление информации о продукте
-app.put('/api/products/:id', (req, res) => {
-  db.updateProduct({ ...req.body, id: req.params.id }, (err) => {
+// Обновление информации о продукте с изменением изображения
+app.put('/api/products/:id', upload.single('image'), (req, res) => {
+  const { name, price, category_id } = req.body;
+  const imageUrl = req.file ? `/images/${req.file.filename}` : req.body.image_url; // Используем новое изображение, если загружено
+
+  db.updateProduct({ id: req.params.id, name, price, image_url: imageUrl, category_id }, (err) => {
     if (err) {
       console.error(err.message);
       res.status(500).send('Error updating product');

@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -95,9 +95,13 @@ h1 {
 }
 
 
-.filter_container{
+.filter_container {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  margin: 0 10px;
 }
 
 
@@ -132,7 +136,6 @@ h1 {
   .product-info p {
     font-size: 16px;
     margin: 0;
-
   }
 
   .counter {
