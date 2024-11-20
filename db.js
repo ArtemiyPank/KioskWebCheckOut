@@ -74,38 +74,42 @@ function checkReport(activityType, date, callback) {
   db.get(`SELECT COUNT(*) AS reportCount FROM ${tableName} WHERE date = ?`, [date], callback);
 }
 
-// Сохранение отчета в базе данных
 function saveReport(activityType, date, products, callback) {
-  let tableName = getTableName(activityType);
+  const tableName = getTableName(activityType);
   if (!tableName) {
     callback(new Error('Invalid activity type'));
     return;
   }
 
   db.serialize(() => {
+    // Обработка продаж
+    const upsertStmt = db.prepare(`
+      INSERT INTO ${tableName} (date, product_id, quantity)
+      VALUES (?, ?, ?)
+      ON CONFLICT(date, product_id)
+      DO UPDATE SET quantity = quantity + excluded.quantity
+    `);
+
+    let completed = 0;
     products.forEach(product => {
-      db.get(
-        `SELECT COUNT(*) AS priceCount FROM prices WHERE product_id = ? AND date = ?`,
-        [product.product_id, date],
-        (err, row) => {
-          if (!err && row.priceCount === 0) {
-            db.run(
-              `INSERT INTO prices (product_id, date, price) 
-              SELECT id, ?, price FROM products WHERE id = ?`,
-              [date, product.product_id]
-            );
-          }
+      upsertStmt.run([date, product.product_id, product.quantity], (err) => {
+        if (err) {
+          console.error("Error saving sales data:", err.message);
         }
-      );
+        finish();
+      });
     });
 
-    const stmt = db.prepare(`INSERT INTO ${tableName} (date, product_id, quantity) VALUES (?, ?, ?)`);
-    products.forEach(product => {
-      stmt.run([date, product.product_id, product.quantity]);
-    });
-    stmt.finalize(callback);
+    function finish() {
+      completed++;
+      if (completed === products.length) {
+        // Финализируем выражение только после завершения всех запросов
+        upsertStmt.finalize(callback);
+      }
+    }
   });
 }
+
 
 // Удаление существующего отчета
 function deleteReport(activityType, date, callback) {

@@ -121,24 +121,6 @@ async function saveReport() {
   }
 
   try {
-    // Проверяем, существует ли отчет за сегодняшний день
-    const checkResponse = await fetch(`/api/check-report?activityType=${activityType}&date=${date}`);
-    const checkData = await checkResponse.json();
-
-    if (checkData.reportExists) {
-      const replace = confirm("A report for today already exists. Do you want to replace it?");
-      if (!replace) {
-        return; // Пользователь решил не заменять отчет
-      }
-
-      // Удаление существующего отчета
-      const deleteSuccess = await deleteReport(activityType, date);
-      if (!deleteSuccess) {
-        alert("Failed to delete existing report.");
-        return;
-      }
-    }
-
     // Отправка нового отчета
     const response = await fetch('/api/save-report', {
       method: 'POST',

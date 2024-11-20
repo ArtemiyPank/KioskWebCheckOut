@@ -8,7 +8,7 @@ db.serialize(() => {
     price REAL NOT NULL,
     image_url TEXT,
     category_id INTEGER,
-    IsHide INTEGER DEFAULT 0,  -- IsHide с дефолтным значением 0
+    IsHide INTEGER DEFAULT 0,
     FOREIGN KEY (category_id) REFERENCES categories (id)
   )`);
 
@@ -22,30 +22,34 @@ db.serialize(() => {
     product_id INTEGER,
     date DATE,
     price REAL,
+    UNIQUE (product_id, date),
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS in_store_sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date DATE,
-    product_id INTEGER,
-    quantity INTEGER,
+    date DATE NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    UNIQUE (date, product_id),
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS delivery_all_sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date DATE,
-    product_id INTEGER,
-    quantity INTEGER,
+    date DATE NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    UNIQUE (date, product_id),
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS delivery_own_sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date DATE,
-    product_id INTEGER,
-    quantity INTEGER,
+    date DATE NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    UNIQUE (date, product_id),
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 });
