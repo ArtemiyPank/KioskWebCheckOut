@@ -59,7 +59,7 @@ function displayProducts(products, cachedCounters) {
   products.forEach(product => {
     const count = cachedCounters[product.id]?.soldToday || 0;
 
-    if(product.IsHide != 1 || count != 0){
+    if (product.IsHide != 1 || count != 0) {
       const productElement = document.createElement('div');
       productElement.classList.add('product');
       productElement.setAttribute('data-id', product.id);
@@ -75,7 +75,13 @@ function displayProducts(products, cachedCounters) {
         <div class="product-controls">
           <div class="counter-container">
             <button onclick="updateCounter(${product.id}, -1, '${product.name}', ${product.price})">-</button>
-            <span id="counter-${product.id}" class="counter">${count}</span>
+            <input 
+              id="counter-${product.id}" 
+              class="counter" 
+              type="number" 
+              min="0" 
+              value="${count}" 
+              onchange="updateCounterDirectly(${product.id}, this.value, '${product.name}', ${product.price})">
             <button onclick="updateCounter(${product.id}, 1, '${product.name}', ${product.price})">+</button>
           </div>
         </div>
@@ -87,7 +93,6 @@ function displayProducts(products, cachedCounters) {
 
   filterProductsByCategory(); // Применяем фильтр категорий после отображения
 }
-
 
 
 function filterProductsByCategory() {
@@ -104,12 +109,19 @@ function filterProductsByCategory() {
   });
 }
 
+function updateCounterDirectly(productId, value, productName, productPrice) {
+  const count = Math.max(0, parseInt(value) || 0);
+  document.getElementById(`counter-${productId}`).value = count;
+
+  saveSalesDataToLocalStorage(productId, productName, productPrice, count);
+}
+
 function updateCounter(productId, change, productName, productPrice) {
   const counterElement = document.getElementById(`counter-${productId}`);
-  let count = parseInt(counterElement.innerText) + change;
+  let count = parseInt(counterElement.value) + change;
 
   if (count < 0) count = 0;
-  counterElement.innerText = count;
+  counterElement.value = count;
 
   saveSalesDataToLocalStorage(productId, productName, productPrice, count);
 }

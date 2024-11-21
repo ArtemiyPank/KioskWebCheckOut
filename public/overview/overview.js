@@ -220,6 +220,7 @@ function displayOverviewProducts(products) {
           </div>
       `;
       container.appendChild(productElement);
+      if(product.IsHide) toggleProductVisibility(product.id);
   });
 }
 
