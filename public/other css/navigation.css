@@ -39,9 +39,9 @@
 
 /* Адаптивные стили для мобильных устройств */
 @media (max-width: 768px) {
-  /* Размещаем навигацию над заголовком по центру */
   .header-flex {
-    flex-direction: column;
+    display: flex;
+    justify-content: space-around;
     align-items: center;
     gap: 10px;
   }

@@ -1,3 +1,6 @@
+let currentProducts = [];
+let currentSortOrder = 'asc';
+
 document.addEventListener('DOMContentLoaded', () => {
   loadCategories();  // Загружаем категории при загрузке страницы
   loadProducts();    // Загружаем все товары
@@ -44,9 +47,10 @@ async function loadProducts() {
     const response = await fetch('/api/products');
     if (!response.ok) throw new Error("Failed to fetch products");
 
-    const products = await response.json();
+    currentProducts = await response.json();
+    sortProducts(currentSortOrder)
     const cachedCounters = getSalesDataFromLocalStorage();
-    displayProducts(products, cachedCounters);
+    displayProducts(currentProducts, cachedCounters);
   } catch (error) {
     console.error("Error loading products:", error);
   }
@@ -94,6 +98,36 @@ function displayProducts(products, cachedCounters) {
   filterProductsByCategory(); // Применяем фильтр категорий после отображения
 }
 
+
+function toggleSortOrder() {
+  const sortArrow = document.getElementById('sort-arrow');
+  const cachedCounters = getSalesDataFromLocalStorage();
+
+  // Переключение порядка сортировки
+  if (currentSortOrder === 'asc') {
+    // если сейчас сортировка по возрастанию, то при переключении должна быть сортировка по убыванию
+    sortProducts('desc'); 
+    currentSortOrder = 'desc';
+    sortArrow.classList.add('sort-desc');
+  } else {
+    // если сейчас сортировка по убыванию, то при переключении должна быть сортировка по возрастанию
+    sortProducts('asc');
+    currentSortOrder = 'asc';
+    sortArrow.classList.remove('sort-desc');
+  }
+
+  // Обновление отображения продуктов
+  displayProducts(currentProducts, cachedCounters);
+}
+
+// Сортировка продуктов
+function sortProducts(sortType) {
+  if (sortType === 'asc') {
+    currentProducts.sort((a, b) => a.price - b.price);
+  } else if (sortType === 'desc') {
+    currentProducts.sort((a, b) => b.price - a.price);
+  }
+}
 
 function filterProductsByCategory() {
   const selectedCategory = document.querySelector('input[name="category"]:checked').value;
