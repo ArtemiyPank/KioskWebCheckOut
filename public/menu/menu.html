@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu</title>
+  <link rel="stylesheet" href="menu.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="header-flex">
+      <h1>Menu</h1>
+    </div>
+    
+    <!-- Контейнер для радиокнопок категорий -->
+    <div id="category-filter" class="filter_container">
+      <label>
+        <input type="radio" name="category" value="all" checked>
+        All
+      </label>
+      <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
+    </div>
+  
+    <!-- Контейнер для списка товаров -->
+    <div id="products-container"></div>
+  </div>
+  
+  <script src="menu.js"></script>
+</body>
+
+</html>

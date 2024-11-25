@@ -1,0 +1,41 @@
+sudo npm install -g pm2
+
+pm2 start server.js --name "KioskWeb"
+
+pm2 startup
+
+pm2 save
+
+
+sudo apt update
+
+sudo apt install nginx
+
+
+sudo nano /etc/nginx/sites-available/kiosk.math-training.ru
+
+server {
+    listen 80;
+    server_name kiosk.math-training.ru;
+
+    location / {
+        proxy_pass http://localhost:3000; # Порт Node.js приложения
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/kiosk.math-training.ru /etc/nginx/sites-enabled/
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+sudo apt install certbot python3-certbot-nginx
+
+sudo certbot --nginx -d kiosk.math-training.ru -v
+
+

@@ -1,9 +1,3 @@
-/* Убираем стрелочки в браузерах на основе Webkit (например, Chrome, Safari) */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
 body {
   font-family: Arial, sans-serif;
@@ -16,29 +10,6 @@ body {
   margin: 0 auto;
   padding: 20px;
 }
-
-.counter-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  
-}
-
-/* Стили для input-счётчиков */
-.counter-container input.counter {
-  font-size: 20px;
-  font-weight: bold;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  border: none;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
-}
-
 
 h1 {
   font-size: 24px;
@@ -58,6 +29,7 @@ h1 {
 
 /* Стили для карточки продукта */
 .product {
+  flex-direction: column;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
@@ -99,30 +71,6 @@ h1 {
   margin-top: 15px;
 }
 
-/* Стили для кнопок */
-.counter-container button {
-  width: 50px;
-  height: 50px;
-  font-size: 22px;
-  background-color: #ddd;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin: 0 8px;
-}
-
-.counter-container button:hover {
-  background-color: #ccc;
-}
-
-/* Стили для счётчика количества */
-.counter {
-  font-size: 20px;
-  font-weight: bold;
-  width: 50px;
-  text-align: center;
-}
 
 
 .filter_container {
@@ -135,42 +83,43 @@ h1 {
 }
 
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
+
+ @media (max-width: 768px) {
   #products-container {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Обеспечивает минимум два продукта на мобильных устройствах */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 
+  /* Карточка товара: горизонтальная компоновка */
   .product {
-    max-width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    text-align: left;
   }
 
-  h1 {
-    margin: 5px;
+  /* Изображение товара: уменьшаем размер и выравниваем */
+  .product img {
+    max-width: 80px;
+    max-height: 80px;
+    margin-right: 10px;
   }
 
-  .container {
-    padding: 8px;
-  }
-
-  .counter-container button {
-    width: 40px;
-    font-size: 22px;
-    margin: 4px;
+  /* Информация о товаре: размещаем справа от изображения */
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1; /* Занимает оставшееся пространство */
   }
 
   .product-info h2 {
-    font-size: 18px;
-    margin: 0;
-  }
-
-  .product-info p {
     font-size: 16px;
     margin: 0;
   }
 
-  .counter {
-    font-size: 24px;
+  .product-info p {
+    font-size: 14px;
+    margin: 5px 0 0 0;
   }
 }
-
