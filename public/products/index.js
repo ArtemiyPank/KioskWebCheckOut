@@ -171,3 +171,56 @@ function getSalesDataFromLocalStorage() {
   const data = localStorage.getItem('salesData');
   return data ? JSON.parse(data) : {};
 }
+
+// Открытие модального окна
+function openReportModal() {
+  const modal = document.getElementById('report-modal');
+  modal.style.display = 'block';
+}
+
+// Закрытие модального окна
+function closeReportModal() {
+  const modal = document.getElementById('report-modal');
+  modal.style.display = 'none';
+}
+
+async function saveReport(activityType) {
+  // const activityType = document.getElementById('activity-type').value;
+  const date = new Date().toISOString().split('T')[0]; // Текущая дата
+
+  // Получаем данные о продажах из localStorage
+  const salesData = getSalesDataFromLocalStorage();
+  const products = Object.keys(salesData).map(productId => ({
+    product_id: parseInt(productId),
+    quantity: salesData[productId].soldToday
+  })).filter(item => item.quantity > 0);
+
+  if (products.length === 0) {
+    alert("No sales data to save.");
+    return;
+  }
+
+  try {
+    // Отправка нового отчета
+    const response = await fetch('/api/save-report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ activityType, date, products })
+    });
+
+    if (response.ok) {
+      alert('Report saved successfully!');
+      localStorage.removeItem('salesData'); // Сброс локальных данных после сохранения
+      loadProducts()
+      closeReportModal()
+    } else {
+      const errorText = await response.text();
+      alert(`Failed to save report: ${errorText}`);
+    }
+  } catch (error) {
+    console.error('Error saving report:', error);
+    alert('An error occurred while saving the report. Please try again.');
+  }
+}

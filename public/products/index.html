@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory of products</title>
-  <link rel="stylesheet" href="../other css/navigation.css">
   <link rel="stylesheet" href="index.css">
 </head>
 
@@ -13,8 +12,8 @@
   <div class="container">
     <div class="header-flex">
       <h1>Product List</h1>
-      <div class="navigation">
-        <a href="../report/report.html" class="nav-button nav-button-secondary">Report</a>
+      <div class="report-block">
+        <button class="report-button" onclick="openReportModal()">Report</button>
       </div>
     </div>
     
@@ -35,13 +34,20 @@
       </div>
     </div>
   </div>
-    
-    
   
     <!-- Контейнер для списка товаров -->
     <div id="products-container"></div>
   </div>
   
+  <!-- Всплывающее окно выбора типа отчёта -->
+<div id="report-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeReportModal()">&times;</span>
+    <h2>Choose Report Type</h2>
+    <button class="modal-button" onclick="saveReport('in_store')">Sales at Table</button>
+    <button class="modal-button" onclick="saveReport('delivery_all')">Deliveries</button>
+  </div>
+</div>
 
   <script src="index.js"></script>
 

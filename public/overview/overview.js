@@ -14,7 +14,7 @@ function openTab(event, tabId) {
 document.addEventListener('DOMContentLoaded', () => {
   loadSalesData('in_store_sales', 'in-store-sales-table');
   loadSalesData('delivery_all_sales', 'delivery-all-sales-table');
-  loadSalesData('delivery_own_sales', 'delivery-own-sales-table');
+  // loadSalesData('delivery_own_sales', 'delivery-own-sales-table');
   loadPricesData();
   // loadProductsData();
   loadOverviewCategories(); // Загрузка категорий для фильтра
