@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSalesData('delivery_all_sales', 'delivery-all-sales-table');
   // loadSalesData('delivery_own_sales', 'delivery-own-sales-table');
   loadPricesData();
-  // loadProductsData();
   loadOverviewCategories(); // Загрузка категорий для фильтра
   loadOverviewProducts(); // Загрузка продуктов для вкладки
   loadCategoriesData();

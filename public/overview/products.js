@@ -82,11 +82,12 @@ async function editProduct(productId) {
         const name = product.querySelector('h2').innerText;
         const price = parseFloat(product.querySelector('.product-info p').innerText.replace('Price: ', '').replace('₪', ''));
         const imageUrl = product.querySelector('img').src;
+
         const category = product.getAttribute('data-category-id');
 
         document.getElementById('edit-name').value = name;
         document.getElementById('edit-price').value = price;
-        // document.getElementById('edit-image-url').value = imageUrl;
+        document.getElementById('current-image').src = imageUrl;
         document.getElementById('edit-category').value = category;
 
         openEditModal();
@@ -175,6 +176,8 @@ document.getElementById('save-changes-button').addEventListener('click', async (
     const price = parseFloat(document.getElementById('edit-price').value);
     const category_id = document.getElementById('edit-category').value;
     const imageFile = document.getElementById('edit-image-file').files[0];
+    const imageUrl = imageFile ? null : document.getElementById('current-image').src; 
+    
 
     if (!name || isNaN(price) || !category_id) {
         alert("Please fill in all fields.");
@@ -188,6 +191,8 @@ document.getElementById('save-changes-button').addEventListener('click', async (
 
     if (imageFile) {
         formData.append("image", imageFile);
+    } else if (imageUrl) {
+        formData.append("image_url", imageUrl); 
     }
 
     const url = isEditing ? `/api/products/${currentProductId}` : '/api/products';
@@ -208,6 +213,25 @@ document.getElementById('save-changes-button').addEventListener('click', async (
         alert(`Error ${isEditing ? 'editing' : 'adding'} product: ${error.message}`);
     }
 });
+
+document.getElementById('edit-image-file').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    const imagePreview = document.getElementById('current-image');
+  
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+  
+      reader.onload = function (e) {
+        imagePreview.src = e.target.result;  
+      };
+  
+      // Считываем файл как DataURL
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '';
+    }
+  });
+  
 
 
 // Обработчик для кнопки сохранения новой категории

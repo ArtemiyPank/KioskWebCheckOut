@@ -45,7 +45,8 @@ app.post('/api/products', upload.single('image'), (req, res) => {
 // Обновление информации о продукте с изменением изображения
 app.put('/api/products/:id', upload.single('image'), (req, res) => {
   const { name, price, category_id } = req.body;
-  const imageUrl = req.file ? `/images/${req.file.filename}` : req.body.image_url; // Используем новое изображение, если загружено
+
+  const imageUrl = req.file ? `/images/${req.file.filename}` : req.body.image_url;
 
   db.updateProduct({ id: req.params.id, name, price, image_url: imageUrl, category_id }, (err) => {
     if (err) {
@@ -56,6 +57,7 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
     }
   });
 });
+
 
 
 // Эндпоинт для скрытия или показа продукта

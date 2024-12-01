@@ -20,7 +20,8 @@ h1 {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-  flex-wrap: wrap; /* Allows tabs to wrap on small screens */
+  flex-wrap: wrap;
+  /* Allows tabs to wrap on small screens */
 }
 
 .tab-button {
@@ -31,11 +32,13 @@ h1 {
   transition: background-color 0.3s ease;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  flex: 1; /* Equal width for all tabs */
+  flex: 1;
+  /* Equal width for all tabs */
   text-align: center;
 }
 
-.tab-button.active, .tab-button:hover {
+.tab-button.active,
+.tab-button:hover {
   background-color: #333;
   color: #fff;
 }
@@ -57,7 +60,8 @@ table {
   font-size: 14px;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 8px;
   border: 1px solid #ddd;
   text-align: left;
@@ -75,6 +79,7 @@ table th {
 
 /* Mobile-specific styles */
 @media (max-width: 768px) {
+
   /* Container adjustments for mobile */
   .container {
     padding: 10px;
@@ -127,7 +132,8 @@ table th {
 /* Основной стиль контейнера продуктов */
 #overview-products-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* Минимальная ширина 150px, заполняет всю доступную ширину */
   gap: 15px;
   justify-items: center;
   padding-top: 20px;
@@ -143,7 +149,8 @@ table th {
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  max-width: 100%; /* Заполняет всю ширину в рамках сетки */
+  max-width: 100%;
+  /* Заполняет всю ширину в рамках сетки */
 }
 
 .product:hover {
@@ -187,11 +194,13 @@ table th {
 }
 
 .edit-btn-container button:nth-child(1) {
-  background-color: #28a745; /* Зеленая кнопка "Редактировать" */
+  background-color: #28a745;
+  /* Зеленая кнопка "Редактировать" */
 }
 
 .edit-btn-container button:nth-child(2) {
-  background-color: #dc3545; /* Красная кнопка "Удалить" */
+  background-color: #dc3545;
+  /* Красная кнопка "Удалить" */
 }
 
 .edit-btn-container button:hover {
@@ -208,7 +217,8 @@ table th {
   padding: 5px 0;
   font-size: 14px;
   color: #fff;
-  background-color: #6c757d; /* Серая кнопка "Скрыть" */
+  background-color: #6c757d;
+  /* Серая кнопка "Скрыть" */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -241,7 +251,8 @@ table th {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
   #overview-products-container {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Обеспечивает минимум два продукта на мобильных устройствах */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Обеспечивает минимум два продукта на мобильных устройствах */
   }
 
   h1 {
@@ -269,12 +280,15 @@ table th {
 
 
 /* Стили для кнопки "Add New Product" */
-#add-new-product-button, #add-new-category-button {
-  width: 100%; /* Во всю ширину контейнера */
-  padding: 8px; /* Тонкая кнопка */
+#add-new-product-button,
+#add-new-category-button {
+  width: 100%;
+  /* Во всю ширину контейнера */
+  padding: 8px;
+  /* Тонкая кнопка */
   font-size: 16px;
-  color: #333; 
-  background-color: #ddd; 
+  color: #333;
+  background-color: #ddd;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -282,8 +296,10 @@ table th {
 
 }
 
-#add-new-product-button:hover, #add-new-category-button:hover {
-  background-color: #999; /* Более темный серый при наведении */
+#add-new-product-button:hover,
+#add-new-category-button:hover {
+  background-color: #999;
+  /* Более темный серый при наведении */
   color: #111;
 }
 
@@ -292,12 +308,15 @@ table th {
 
 /* Стили для скрытого продукта */
 .product.hidden {
-  background-color: #e0e0e0; /* Светло-серый фон для скрытых продуктов */
-  opacity: 0.6; /* Полупрозрачный вид */
+  background-color: #e0e0e0;
+  /* Светло-серый фон для скрытых продуктов */
+  opacity: 0.6;
+  /* Полупрозрачный вид */
 }
 
 .product.hidden img {
-  filter: grayscale(100%); /* Черно-белое изображение для скрытых продуктов */
+  filter: grayscale(100%);
+  /* Черно-белое изображение для скрытых продуктов */
 }
 
 
@@ -305,20 +324,25 @@ table th {
 /* Ограничение ширины таблицы */
 table {
   width: 100%;
-  max-width: 100%; /* Ограничивает таблицу шириной контейнера */
-  overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
-  display: block; /* Позволяет прокрутку на мобильных */
+  max-width: 100%;
+  /* Ограничивает таблицу шириной контейнера */
+  overflow-x: auto;
+  /* Добавляет горизонтальную прокрутку при необходимости */
+  display: block;
+  /* Позволяет прокрутку на мобильных */
   border-collapse: collapse;
   margin: 20px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-size: 14px;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 8px;
   border: 1px solid #ddd;
   text-align: left;
-  white-space: nowrap; /* Запрещает перенос текста */
+  white-space: nowrap;
+  /* Запрещает перенос текста */
 }
 
 table th {
@@ -372,4 +396,9 @@ table th {
 .modal-content input[type="file"] {
   margin-top: 5px;
   font-size: 14px;
+}
+
+#current-image {
+  width: 40%;
+  margin-top: 10px;
 }

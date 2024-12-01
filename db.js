@@ -1,4 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const fs = require('fs');
+
 const db = new sqlite3.Database('./data/kiosk.db', (err) => {
   if (err) {
     console.error('Error opening database:', err);
@@ -28,12 +31,33 @@ function addProduct({ name, price, category_id, image_url }, callback) {
 
 // Функция для обновления информации о продукте в базе данных
 function updateProduct({ id, name, price, image_url, category_id }, callback) {
-  db.run(
-    `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
-    [name, price, image_url, category_id, id],
-    callback
-  );
+  // Получаем старое изображение из базы данных
+  db.get(`SELECT image_url FROM products WHERE id = ?`, [id], (err, row) => {
+    if (err) {
+      console.error('Error fetching product image:', err);
+      return callback(err);
+    }
+
+    const oldImagePath = row ? path.join(__dirname, 'public', row.image_url) : null;
+
+    // Если загружено новое изображение, удаляем старое
+    if (image_url && oldImagePath && fs.existsSync(oldImagePath)) {
+      fs.unlink(oldImagePath, (err) => {
+        if (err) {
+          console.error('Error deleting old image:', err);
+        }
+      });
+    }
+
+    // Обновляем продукт в базе данных
+    db.run(
+      `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
+      [name, price, image_url, category_id, id],
+      callback
+    );
+  });
 }
+
 
 
 // Функция для обновления видимости продукта
