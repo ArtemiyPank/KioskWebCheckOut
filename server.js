@@ -42,13 +42,13 @@ app.post('/api/products', upload.single('image'), (req, res) => {
   });
 });
 
-// Обновление информации о продукте с изменением изображения
+// Обновление информации о продукте 
 app.put('/api/products/:id', upload.single('image'), (req, res) => {
   const { name, price, category_id } = req.body;
-
+  const imageFile = req.file;
   const imageUrl = req.file ? `/images/${req.file.filename}` : req.body.image_url;
 
-  db.updateProduct({ id: req.params.id, name, price, image_url: imageUrl, category_id }, (err) => {
+  db.updateProduct({ id: req.params.id, name, price, image_url: imageUrl, category_id, imageFile }, (err) => {
     if (err) {
       console.error(err.message);
       res.status(500).send('Error updating product');

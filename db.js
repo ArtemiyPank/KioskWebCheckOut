@@ -10,6 +10,19 @@ const db = new sqlite3.Database('./data/kiosk.db', (err) => {
   }
 });
 
+
+// Функция для получения продукта по ID
+function getProductById(id, callback) {
+  db.get(`SELECT image_url FROM products WHERE id = ?`, [id], (err, row) => {
+    if (err) {
+      console.error('Error fetching product image:', err);
+      return callback(err);
+    }
+    callback(null, row);
+  });
+}
+
+
 // Получение списка всех продуктов с названием категории
 function getProducts(callback) {
   const query = `
@@ -29,30 +42,65 @@ function addProduct({ name, price, category_id, image_url }, callback) {
   );
 }
 
-// Функция для обновления информации о продукте в базе данных
-function updateProduct({ id, name, price, image_url, category_id }, callback) {
+
+// Функция для создания безопасного имени файла из названия товара
+function generateImageName(productsName) {
+  let name = productsName
+    .toLowerCase() // Преобразуем в нижний регистр
+    .replace(/[^a-z0-9\s-]/g, '') // Убираем все символы, кроме букв, цифр и пробелов
+    .replace(/\s+/g, '-') // Заменяем пробелы на дефисы
+    .replace(/-+/g, '-'); // Заменяем несколько дефисов подряд на один
+
+    name += '-' + Date.now(); // метка времени (в миллисекундах) для уникальности
+  return name;
+}
+
+
+// Функция для удаления старого изображения и сохранении нового имени)
+function handleImageUpdate(id, name, imageFile, callback) {
   // Получаем старое изображение из базы данных
-  db.get(`SELECT image_url FROM products WHERE id = ?`, [id], (err, row) => {
+  getProductById(id, (err, row) => {
     if (err) {
-      console.error('Error fetching product image:', err);
       return callback(err);
     }
 
     const oldImagePath = row ? path.join(__dirname, 'public', row.image_url) : null;
 
-    // Если загружено новое изображение, удаляем старое
-    if (image_url && oldImagePath && fs.existsSync(oldImagePath)) {
+    // Если старое изображение существует, удаляем его
+    if (oldImagePath && fs.existsSync(oldImagePath)) {
       fs.unlink(oldImagePath, (err) => {
         if (err) {
           console.error('Error deleting old image:', err);
         }
       });
     }
+    const newImageName = generateImageName(name) + path.extname(imageFile.originalname);
+
+    const newImagePath = path.join(__dirname, 'public', 'images', newImageName);
+
+    // Сохраняем файл под новым именем
+    fs.rename(imageFile.path, newImagePath, (err) => {
+      if (err) {
+        console.error('Error saving new image:', err);
+        return callback(err);
+      }
+
+      callback(null, newImageName);
+    });
+  });
+}
+
+// Функция для обновления информации о продукте в базе данных
+function updateProduct({ id, name, price, image_url, category_id, imageFile }, callback) {
+  handleImageUpdate(id, name, imageFile, (err, newImageName) => {
+    if (err) {
+      return callback(err);
+    }
 
     // Обновляем продукт в базе данных
     db.run(
       `UPDATE products SET name = ?, price = ?, image_url = ?, category_id = ? WHERE id = ?`,
-      [name, price, image_url, category_id, id],
+      [name, price, '/images/' + newImageName, category_id, id],
       callback
     );
   });
