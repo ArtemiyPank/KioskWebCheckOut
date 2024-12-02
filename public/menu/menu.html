@@ -13,20 +13,29 @@
     <div class="header-flex">
       <h1>Menu</h1>
     </div>
-    
+
     <!-- Контейнер для радиокнопок категорий -->
-    <div id="category-filter" class="filter_container">
-      <label>
-        <input type="radio" name="category" value="all" checked>
-        All
-      </label>
-      <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
+    <div class="filter-sort_container">
+      <div id="category-filter" class="filter_container">
+        <label>
+          <input type="radio" name="category" value="all" checked>
+          All
+        </label>
+        <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
+      </div>
+
+      <div class="sort-container">
+        <div class="sort-toggle" onclick="toggleSortOrder()">
+          <span class="sort-text">Sort by price</span>
+          <span id="sort-arrow" class="sort-arrow">↓</span>
+        </div>
+      </div>
     </div>
-  
+
     <!-- Контейнер для списка товаров -->
     <div id="products-container"></div>
   </div>
-  
+
   <script src="menu.js"></script>
 </body>
 

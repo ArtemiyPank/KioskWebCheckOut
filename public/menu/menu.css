@@ -1,4 +1,3 @@
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -20,7 +19,8 @@ h1 {
 /* Основной стиль контейнера товаров */
 #products-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Минимальная ширина 150px, заполняет всю доступную ширину */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* Минимальная ширина 150px, заполняет всю доступную ширину */
   gap: 15px;
   justify-items: center;
   padding-top: 20px;
@@ -37,7 +37,8 @@ h1 {
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  max-width: 100%; /* Заполняет всю ширину в рамках сетки */
+  max-width: 100%;
+  /* Заполняет всю ширину в рамках сетки */
 }
 
 .product:hover {
@@ -62,16 +63,13 @@ h1 {
   margin: 10px;
 }
 
-/* Стили для контейнера управления количеством */
-.product-controls {
+
+.filter-sort_container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  margin-top: 15px;
+  justify-content: space-around;
 }
-
-
 
 .filter_container {
   display: flex;
@@ -83,8 +81,44 @@ h1 {
 }
 
 
+.sort-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
- @media (max-width: 768px) {
+.sort-toggle:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+.sort-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-right: 8px;
+}
+
+.sort-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  transition: transform 0.2s ease-in-out;
+}
+
+.sort-arrow.sort-desc {
+  transform: rotate(180deg);
+}
+
+
+
+@media (max-width: 768px) {
   #products-container {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
@@ -101,7 +135,6 @@ h1 {
   /* Изображение товара: уменьшаем размер и выравниваем */
   .product img {
     max-width: 80px;
-    max-height: 80px;
     margin-right: 10px;
   }
 
@@ -110,7 +143,8 @@ h1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 1; /* Занимает оставшееся пространство */
+    flex: 1;
+    /* Занимает оставшееся пространство */
   }
 
   .product-info h2 {
@@ -121,5 +155,36 @@ h1 {
   .product-info p {
     font-size: 14px;
     margin: 5px 0 0 0;
+  }
+
+  .sort-toggle {
+    width: 32px;
+  }
+
+  .sort-text {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .product {
+    width: 88%;
+    flex-direction: column;
+  }
+
+  /* Информация о товаре: размещаем справа от изображения */
+  .product-info {
+    width: 100%;
+  }
+
+  .product-info h2 {
+    align-self: center;
+  }
+
+
+  /* Стиль изображения продукта */
+  .product img {
+    max-width: 100px;
+    margin: 0;
   }
 }
