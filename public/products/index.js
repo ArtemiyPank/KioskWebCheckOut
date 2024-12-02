@@ -106,7 +106,7 @@ function toggleSortOrder() {
   // Переключение порядка сортировки
   if (currentSortOrder === 'asc') {
     // если сейчас сортировка по возрастанию, то при переключении должна быть сортировка по убыванию
-    sortProducts('desc'); 
+    sortProducts('desc');
     currentSortOrder = 'desc';
     sortArrow.classList.add('sort-desc');
   } else {

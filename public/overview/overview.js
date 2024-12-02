@@ -1,3 +1,6 @@
+let currentProducts = [];
+let currentSortOrder = 'asc';
+
 // Функция для открытия вкладок
 function openTab(event, tabId) {
   const tabContents = document.querySelectorAll('.tab-content');
@@ -64,7 +67,7 @@ async function loadOverviewCategories() {
   try {
     const response = await fetch('/api/categories');
     const categories = await response.json();
-    const categoryFilter = document.getElementById('overview-category-filter');
+    const categoryFilter = document.getElementById('category-filter');
 
     // Очищаем и добавляем категории в фильтр
     categoryFilter.innerHTML = `
@@ -94,8 +97,9 @@ async function loadOverviewCategories() {
 async function loadOverviewProducts() {
   try {
     const response = await fetch('/api/products');
-    const products = await response.json();
-    displayOverviewProducts(products);
+    currentProducts = await response.json();
+    sortProducts(currentSortOrder)
+    displayOverviewProducts(currentProducts);
   } catch (error) {
     console.error("Error loading products:", error);
   }
@@ -198,13 +202,13 @@ function displayOverviewProducts(products) {
   container.innerHTML = ''; // Очистка контейнера
 
   products.forEach(product => {
-      const productElement = document.createElement('div');
-      productElement.classList.add('product');
-      productElement.setAttribute('data-id', product.id);
-      productElement.setAttribute('data-category', product.category_name);
-      productElement.setAttribute('data-category-id', product.category_id);
+    const productElement = document.createElement('div');
+    productElement.classList.add('product');
+    productElement.setAttribute('data-id', product.id);
+    productElement.setAttribute('data-category', product.category_name);
+    productElement.setAttribute('data-category-id', product.category_id);
 
-      productElement.innerHTML = `
+    productElement.innerHTML = `
           <img src="${product.image_url}" alt="${product.name}">
           <div class="product-info">
               <h2>${product.name}</h2>
@@ -218,8 +222,8 @@ function displayOverviewProducts(products) {
               <button onclick="toggleProductVisibility('${product.id}')">${product.IsHide ? 'Show' : 'Hide'}</button>
           </div>
       `;
-      container.appendChild(productElement);
-      if(product.IsHide) toggleProductVisibility(product.id);
+    container.appendChild(productElement);
+    if (product.IsHide) toggleProductVisibility(product.id);
   });
 }
 
@@ -233,6 +237,35 @@ function filterOverviewProductsByCategory() {
     const productCategory = product.getAttribute('data-category');
     product.style.display = (selectedCategory === 'all' || productCategory === selectedCategory) ? 'block' : 'none';
   });
+}
+
+function toggleSortOrder() {
+  const sortArrow = document.getElementById('sort-arrow');
+
+  // Переключение порядка сортировки
+  if (currentSortOrder === 'asc') {
+    // если сейчас сортировка по возрастанию, то при переключении должна быть сортировка по убыванию
+    sortProducts('desc');
+    currentSortOrder = 'desc';
+    sortArrow.classList.add('sort-desc');
+  } else {
+    // если сейчас сортировка по убыванию, то при переключении должна быть сортировка по возрастанию
+    sortProducts('asc');
+    currentSortOrder = 'asc';
+    sortArrow.classList.remove('sort-desc');
+  }
+
+  // Обновление отображения продуктов
+  displayOverviewProducts(currentProducts);
+}
+
+// Сортировка продуктов
+function sortProducts(sortType) {
+  if (sortType === 'asc') {
+    currentProducts.sort((a, b) => a.price - b.price);
+  } else if (sortType === 'desc') {
+    currentProducts.sort((a, b) => b.price - a.price);
+  }
 }
 
 // Функция отображения таблицы выручки

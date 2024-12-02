@@ -38,12 +38,21 @@
       <div id="prices-table"></div>
     </div>
     <div id="products" class="tab-content">
-      <!-- Контейнер для фильтра по категориям -->
-      <div id="overview-category-filter" class="filter_container">
-        <label>
-          <input type="radio" name="overview-category" value="all" checked>
-          All
-        </label>
+      <div class="filter-sort_container">
+        <div id="category-filter" class="filter_container">
+          <label>
+            <input type="radio" name="category" value="all" checked>
+            All
+          </label>
+          <!-- Радиокнопки для категорий будут добавлены здесь через JavaScript -->
+        </div>
+
+        <div class="sort-container">
+          <div class="sort-toggle" onclick="toggleSortOrder()">
+            <span class="sort-text">Sort by price</span>
+            <span id="sort-arrow" class="sort-arrow">↓</span>
+          </div>
+        </div>
       </div>
 
       <!-- Кнопка для добавления нового товара -->
@@ -52,48 +61,50 @@
       <!-- Контейнер для отображения продуктов -->
       <div id="overview-products-container"></div>
     </div>
-    <div id="categories" class="tab-content">
-      <button id="add-new-category-button" onclick="openAddCategoryModal()">Add New Category</button>
-      <div id="categories-table"></div>
-    </div>
-    <div id="revenue" class="tab-content">
-      <div id="revenue-table"></div>
+
+  </div>
+  <div id="categories" class="tab-content">
+    <button id="add-new-category-button" onclick="openAddCategoryModal()">Add New Category</button>
+    <div id="categories-table"></div>
+  </div>
+  <div id="revenue" class="tab-content">
+    <div id="revenue-table"></div>
+  </div>
+  </div>
+
+  <!-- Модальное окно для редактирования или добавления продукта -->
+  <div id="edit-product-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeEditModal()">&times;</span>
+      <h2 id="modal-title">Edit Product</h2>
+      <label for="edit-name">Name:</label>
+      <input type="text" id="edit-name" required>
+      <label for="edit-price">Price (₪):</label>
+      <input type="number" id="edit-price" required>
+
+      <label for="edit-image-file">Upload Image:</label>
+      <input type="file" id="edit-image-file" accept="image/*">
+      <img id="current-image" src="" alt="Product Image">
+      <label for="edit-category">Category:</label>
+      <select id="edit-category" required></select>
+      <button id="save-changes-button">Save Changes</button>
     </div>
   </div>
 
-<!-- Модальное окно для редактирования или добавления продукта -->
-<div id="edit-product-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeEditModal()">&times;</span>
-    <h2 id="modal-title">Edit Product</h2>
-    <label for="edit-name">Name:</label>
-    <input type="text" id="edit-name" required>
-    <label for="edit-price">Price (₪):</label>
-    <input type="number" id="edit-price" required>
 
-    <label for="edit-image-file">Upload Image:</label>
-    <input type="file" id="edit-image-file" accept="image/*">
-    <img id="current-image" src="" alt="Product Image">
-    <label for="edit-category">Category:</label>
-    <select id="edit-category" required></select>
-    <button id="save-changes-button">Save Changes</button>
-  </div>
-</div>
-
-
-    <!-- Модальное окно для добавления новой категории -->
-    <div id="add-category-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeAddCategoryModal()">&times;</span>
-        <h2>Add New Category</h2>
-        <label for="category-name">Category Name:</label>
-        <input type="text" id="category-name" required>
-        <button id="save-category-button">Save Category</button>
-      </div>
+  <!-- Модальное окно для добавления новой категории -->
+  <div id="add-category-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeAddCategoryModal()">&times;</span>
+      <h2>Add New Category</h2>
+      <label for="category-name">Category Name:</label>
+      <input type="text" id="category-name" required>
+      <button id="save-category-button">Save Category</button>
     </div>
+  </div>
 
-    <script src="overview.js"></script>
-    <script src="products.js"></script>
+  <script src="overview.js"></script>
+  <script src="products.js"></script>
 </body>
 
 </html>
