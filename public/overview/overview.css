@@ -517,3 +517,74 @@ table th {
   padding-left: 10px;
   font-weight: bold;
 }
+
+
+/* Контейнер для таблицы с горизонтальной прокруткой */
+.table-container-mobile {
+  width: 100%; /* Растягиваем контейнер на всю ширину экрана */
+  overflow-x: auto;  /* Включаем горизонтальную прокрутку */
+  -webkit-overflow-scrolling: touch;  /* Плавная прокрутка на мобильных устройствах */
+  margin-top: 20px;
+}
+
+/* Стиль самой таблицы */
+.table-mobile {
+  width: 100%; /* Растягиваем таблицу на всю ширину */
+  table-layout: fixed;  /* Статическая ширина столбцов */
+  border-collapse: collapse; /* Убираем промежутки между ячейками */
+}
+
+/* Стиль для ячеек таблицы */
+.table-mobile th, .table-mobile td {
+  text-align: center;
+  padding: 12px 10px;  
+  border: 1px solid #ddd;  
+  width: 95%;
+}
+
+/* Стиль для заголовков столбцов */
+.table-mobile th {
+  background-color: #f1f1f1; 
+  font-weight: bold; 
+  font-size: 16px; 
+  text-transform: uppercase; 
+  color: #333; 
+}
+
+/* Стиль для строк данных */
+.table-mobile td {
+  background-color: #fff;
+}
+
+/* Стиль для ячеек с продуктами */
+.product-name {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Контейнер для стрелок и заголовка с датой */
+.date-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.date-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.navigate-button {
+  padding: 5px 15px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.navigate-button:active {
+  background-color: #838689;
+}

@@ -29,6 +29,7 @@ async function openAddProductModal() {
 
     document.getElementById('edit-name').value = '';
     document.getElementById('edit-price').value = '';
+    document.getElementById('current-image').src = '';
 
     try {
         const response = await fetch('/api/categories');
