@@ -74,8 +74,13 @@ function handleImageUpdate(id, name, imageFile, callback) {
         }
       });
     }
-    const newImageName = generateImageName(name) + path.extname(imageFile.originalname);
 
+    // Проверяем, было ли передано новое изображение
+    if (!imageFile) {
+      return callback(null, row.image_url); // Возвращаем старый путь, если новое изображение отсутствует
+    }
+
+    const newImageName = generateImageName(name) + path.extname(imageFile.originalname);
     const newImagePath = path.join(__dirname, 'public', 'images', newImageName);
 
     // Сохраняем файл под новым именем
@@ -146,25 +151,40 @@ function checkReport(activityType, date, callback) {
   db.get(`SELECT COUNT(*) AS reportCount FROM ${tableName} WHERE date = ?`, [date], callback);
 }
 
-function saveReport(activityType, date, products, callback) {
-  const tableName = getTableName(activityType);
-  if (!tableName) {
-    callback(new Error('Invalid activity type'));
-    return;
+// Функция для генерации номера заказа на основе текущей даты
+function generateOrderNumber(date, callback) {
+  db.get(`SELECT MAX(order_number) AS maxOrder FROM sales WHERE date = ?`, [date], (err, row) => {
+    if (err) {
+      return callback(err);
+    }
+
+    // Если заказов за этот день еще нет, начинаем с 1
+    const orderNumber = row ? row.maxOrder + 1 : 1;
+    callback(null, orderNumber);
+  });
+}
+
+// Функция для сохранения продаж с типом (in_store или delivery)
+function saveReport(date, products, saleType, callback) {
+  // Проверка корректности типа продажи
+  if (saleType !== 'in_store' && saleType !== 'delivery') {
+    return callback(new Error('Invalid sale type'));
   }
 
-  db.serialize(() => {
-    // Обработка продаж
+  // Генерация номера заказа для текущего дня
+  generateOrderNumber(date, (err, orderNumber) => {
+    if (err) {
+      return callback(err);
+    }
+
     const upsertStmt = db.prepare(`
-      INSERT INTO ${tableName} (date, product_id, quantity)
-      VALUES (?, ?, ?)
-      ON CONFLICT(date, product_id)
-      DO UPDATE SET quantity = quantity + excluded.quantity
+      INSERT INTO sales (date, product_id, quantity, sale_type, order_number)
+      VALUES (?, ?, ?, ?, ?)
     `);
 
     let completed = 0;
     products.forEach(product => {
-      upsertStmt.run([date, product.product_id, product.quantity], (err) => {
+      upsertStmt.run([date, product.product_id, product.quantity, saleType, orderNumber], (err) => {
         if (err) {
           console.error("Error saving sales data:", err.message);
         }
@@ -175,12 +195,13 @@ function saveReport(activityType, date, products, callback) {
     function finish() {
       completed++;
       if (completed === products.length) {
-        // Финализируем выражение только после завершения всех запросов
         upsertStmt.finalize(callback);
       }
     }
   });
 }
+
+
 
 
 // Удаление существующего отчета
@@ -238,30 +259,15 @@ function savePricesForDate(date, callback) {
   if (callback) callback();
 }
 
-// Определение таблицы на основе типа активности
-function getTableName(activityType) {
-  switch (activityType) {
-    case 'in_store':
-      return 'in_store_sales';
-    case 'delivery_all':
-      return 'delivery_all_sales';
-    case 'delivery_own':
-      return 'delivery_own_sales';
-    default:
-      return null;
-  }
-}
 
-// Получение данных о продажах
-function getSalesDataForTable(tableName, callback) {
+
+// Получение данных о продажах для всех типов продаж (in_store и delivery) из таблицы sales
+function getSalesDataForTable(callback) {
   const query = `
-    SELECT dates.date, products.name AS product_name, COALESCE(sales.quantity, 0) AS quantity
-    FROM (
-      SELECT DISTINCT date FROM ${tableName}
-    ) AS dates
-    CROSS JOIN products
-    LEFT JOIN ${tableName} AS sales ON sales.date = dates.date AND sales.product_id = products.id
-    ORDER BY dates.date, products.name
+    SELECT sales.date, products.name AS product_name, COALESCE(sales.quantity, 0) AS quantity, sales.sale_type
+    FROM sales
+    JOIN products ON sales.product_id = products.id
+    ORDER BY sales.date, products.name, sales.sale_type
   `;
 
   db.all(query, [], (err, rows) => {
@@ -270,22 +276,30 @@ function getSalesDataForTable(tableName, callback) {
     const formattedData = {};
     rows.forEach(row => {
       if (!formattedData[row.date]) formattedData[row.date] = {};
-      formattedData[row.date][row.product_name] = row.quantity || '-';
+
+      // Если для этой даты уже есть данные для данного продукта, добавляем количество
+      if (!formattedData[row.date][row.product_name]) {
+        formattedData[row.date][row.product_name] = {
+          in_store: 0,
+          delivery: 0
+        };
+      }
+
+      // Добавляем количество в соответствующий тип продажи
+      formattedData[row.date][row.product_name][row.sale_type] += row.quantity;
     });
+
     callback(null, formattedData);
   });
 }
 
-// Получение данных о ценах
+
 function getPricesDataFormatted(callback) {
   const query = `
-    SELECT dates.date, products.name AS product_name, COALESCE(prices.price, '-') AS price
-    FROM (
-      SELECT DISTINCT date FROM prices
-    ) AS dates
-    CROSS JOIN products
-    LEFT JOIN prices ON prices.date = dates.date AND prices.product_id = products.id
-    ORDER BY dates.date, products.name
+    SELECT prices.date, products.name AS product_name, COALESCE(prices.price, '-') AS price
+    FROM prices
+    LEFT JOIN products ON prices.product_id = products.id
+    ORDER BY prices.date, products.name
   `;
 
   db.all(query, [], (err, rows) => {
@@ -300,17 +314,12 @@ function getPricesDataFormatted(callback) {
   });
 }
 
+
 // Получение данных о выручке
 function getRevenueByDate(callback) {
   const query = `
     SELECT sales.date, SUM(sales.quantity * prices.price) AS total_revenue
-    FROM (
-      SELECT date, product_id, quantity FROM in_store_sales
-      UNION ALL
-      SELECT date, product_id, quantity FROM delivery_all_sales
-      UNION ALL
-      SELECT date, product_id, quantity FROM delivery_own_sales
-    ) AS sales
+    FROM sales
     JOIN prices ON sales.product_id = prices.product_id AND sales.date = prices.date
     GROUP BY sales.date
     ORDER BY sales.date;
@@ -321,6 +330,7 @@ function getRevenueByDate(callback) {
     callback(null, rows);
   });
 }
+
 
 module.exports = {
   getProducts,
@@ -334,7 +344,6 @@ module.exports = {
   saveReport,
   deleteReport,
   savePricesForDate,
-  getTableName,
   getSalesDataForTable,
   getPricesDataFormatted,
   getRevenueByDate,

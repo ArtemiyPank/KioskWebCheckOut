@@ -26,30 +26,14 @@ db.serialize(() => {
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS in_store_sales (
+  db.run(`CREATE TABLE IF NOT EXISTS sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     date DATE NOT NULL,
     product_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL,
-    UNIQUE (date, product_id),
-    FOREIGN KEY (product_id) REFERENCES products (id)
-  )`);
-
-  db.run(`CREATE TABLE IF NOT EXISTS delivery_all_sales (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date DATE NOT NULL,
-    product_id INTEGER NOT NULL,
-    quantity INTEGER NOT NULL,
-    UNIQUE (date, product_id),
-    FOREIGN KEY (product_id) REFERENCES products (id)
-  )`);
-
-  db.run(`CREATE TABLE IF NOT EXISTS delivery_own_sales (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date DATE NOT NULL,
-    product_id INTEGER NOT NULL,
-    quantity INTEGER NOT NULL,
-    UNIQUE (date, product_id),
+    sale_type TEXT NOT NULL,  -- 'in_store' or 'delivery'
+    order_number INTEGER NOT NULL,
+    UNIQUE (date, product_id, order_number),  -- Prevent overwriting the same product on the same day with the same order number
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
 });

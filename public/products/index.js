@@ -12,7 +12,7 @@ async function loadCategories() {
     if (!response.ok) throw new Error("Failed to fetch categories");
 
     const categories = await response.json();
-    localStorage.setItem('categories', categories);
+    localStorage.setItem('categories', JSON.stringify(categories));
 
     const categoryFilter = document.getElementById('category-filter');
 
@@ -40,7 +40,6 @@ async function loadCategories() {
     console.error("Error loading categories:", error);
   }
 }
-
 
 async function loadProducts() {
   try {
@@ -98,25 +97,21 @@ function displayProducts(products, cachedCounters) {
   filterProductsByCategory(); // Применяем фильтр категорий после отображения
 }
 
-
 function toggleSortOrder() {
   const sortArrow = document.getElementById('sort-arrow');
   const cachedCounters = getSalesDataFromLocalStorage();
 
   // Переключение порядка сортировки
   if (currentSortOrder === 'asc') {
-    // если сейчас сортировка по возрастанию, то при переключении должна быть сортировка по убыванию
     sortProducts('desc');
     currentSortOrder = 'desc';
     sortArrow.classList.add('sort-desc');
   } else {
-    // если сейчас сортировка по убыванию, то при переключении должна быть сортировка по возрастанию
     sortProducts('asc');
     currentSortOrder = 'asc';
     sortArrow.classList.remove('sort-desc');
   }
 
-  // Обновление отображения продуктов
   displayProducts(currentProducts, cachedCounters);
 }
 
@@ -160,32 +155,21 @@ function updateCounter(productId, change, productName, productPrice) {
   saveSalesDataToLocalStorage(productId, productName, productPrice, count);
 }
 
-
+// Функция для сохранения данных о продажах в localStorage
 function saveSalesDataToLocalStorage(productId, productName, productPrice, quantitySold) {
   const salesData = getSalesDataFromLocalStorage();
   salesData[productId] = { name: productName, price: productPrice, soldToday: quantitySold };
   localStorage.setItem('salesData', JSON.stringify(salesData));
 }
 
+// Функция для получения данных о продажах из localStorage
 function getSalesDataFromLocalStorage() {
   const data = localStorage.getItem('salesData');
   return data ? JSON.parse(data) : {};
 }
 
-// Открытие модального окна
-function openReportModal() {
-  const modal = document.getElementById('report-modal');
-  modal.style.display = 'block';
-}
-
-// Закрытие модального окна
-function closeReportModal() {
-  const modal = document.getElementById('report-modal');
-  modal.style.display = 'none';
-}
-
-async function saveReport(activityType) {
-  // const activityType = document.getElementById('activity-type').value;
+// Функция для сохранения отчета
+async function saveReport(saleType) {
   const date = new Date().toISOString().split('T')[0]; // Текущая дата
 
   // Получаем данные о продажах из localStorage
@@ -201,20 +185,20 @@ async function saveReport(activityType) {
   }
 
   try {
-    // Отправка нового отчета
+    // Отправка отчета на сервер
     const response = await fetch('/api/save-report', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ activityType, date, products })
+      body: JSON.stringify({ saleType, date, products })
     });
 
     if (response.ok) {
       alert('Report saved successfully!');
       localStorage.removeItem('salesData'); // Сброс локальных данных после сохранения
-      loadProducts()
-      closeReportModal()
+      loadProducts();  // Загружаем данные о продуктах
+      closeReportModal(); // Закрываем модальное окно
     } else {
       const errorText = await response.text();
       alert(`Failed to save report: ${errorText}`);
@@ -224,3 +208,18 @@ async function saveReport(activityType) {
     alert('An error occurred while saving the report. Please try again.');
   }
 }
+
+
+// Открытие модального окна
+function openReportModal() {
+  const modal = document.getElementById('report-modal');
+  modal.style.display = 'block';
+}
+
+// Закрытие модального окна
+function closeReportModal() {
+  const modal = document.getElementById('report-modal');
+  modal.style.display = 'none';
+}
+
+

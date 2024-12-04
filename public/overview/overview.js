@@ -15,36 +15,80 @@ function openTab(event, tabId) {
 
 // Загрузка всех таблиц при готовности DOM
 document.addEventListener('DOMContentLoaded', () => {
-  loadSalesData('in_store_sales', 'in-store-sales-table');
-  loadSalesData('delivery_all_sales', 'delivery-all-sales-table');
-  // loadSalesData('delivery_own_sales', 'delivery-own-sales-table');
-  loadPricesData();
   loadOverviewCategories(); // Загрузка категорий для фильтра
   loadOverviewProducts(); // Загрузка продуктов для вкладки
-  loadCategoriesData();
-  loadRevenueData();
+  loadCategoriesData(); // Загрузка данных о категориях
+  loadRevenueData(); // Загрузка данных о выручке
+
+  // Загрузка данных для разных типов продаж
+  loadSalesData('all', 'all-sales-table');  // Все продажи
+  loadSalesData('in_store', 'in-store-sales-table');  // Продажи в магазине
+  loadSalesData('delivery', 'delivery-sales-table');  // Доставка
+  loadPricesData()
 });
+
+
 
 function isMobile() {
   return window.innerWidth <= 768;
 }
 
 // Функция загрузки данных о продажах
-async function loadSalesData(tableName, containerId) {
+async function loadSalesData(saleType, tableId) {
   try {
-    const response = await fetch(`/api/sales-data/${tableName}`);
+    const response = await fetch(`/api/sales-data`);
     const salesData = await response.json();
-
-    // Проверка на мобильное устройство
-    if (isMobile()) {
-      renderHorizontalRows(containerId, salesData, tableName.replace('_', ' '));
-    } else {
-      renderSalesTable(containerId, salesData, tableName.replace('_', ' '));
+    
+    if (!salesData) {
+      console.error("No sales data available.");
+      return;
     }
+    
+    const filteredData = filterSalesByType(salesData, saleType);
+
+    // Проверяем, существует ли контейнер
+    const container = document.getElementById(tableId);
+    if (!container) {
+      console.error(`Container with id "${tableId}" not found!`);
+      return;
+    }
+
+    // Рендерим таблицу с данными о продажах
+    renderSalesTable(tableId, filteredData, `${saleType.charAt(0).toUpperCase() + saleType.slice(1)} Sales`);
   } catch (error) {
-    console.error(`Error loading ${tableName} data:`, error);
+    console.error("Error loading sales data:", error);
   }
 }
+
+
+
+// Функция фильтрации данных по типу продажи
+function filterSalesByType(salesData, saleType = 'all') {
+  const filteredData = {};
+
+  // Если saleType === 'all', обрабатываем и in_store, и delivery
+  const saleTypes = saleType === 'all' ? ['in_store', 'delivery'] : [saleType];
+
+  saleTypes.forEach(type => {
+    Object.keys(salesData).forEach(date => {
+      if (!filteredData[date]) {
+        filteredData[date] = {};
+      }
+      Object.keys(salesData[date]).forEach(product => {
+        if (salesData[date][product][type] !== undefined) {
+          if (!filteredData[date][product]) {
+            filteredData[date][product] = 0; // Инициализируем количество
+          }
+          filteredData[date][product] += salesData[date][product][type]; // Добавляем количество для этого типа
+        }
+      });
+    });
+  });
+
+  return filteredData;
+}
+
+
 
 // Функция загрузки данных о ценах
 async function loadPricesData() {
@@ -62,6 +106,8 @@ async function loadPricesData() {
     console.error("Error loading prices data:", error);
   }
 }
+
+
 
 async function loadOverviewCategories() {
   try {
@@ -127,73 +173,180 @@ async function loadRevenueData() {
   }
 }
 
-// Функция отображения таблицы продаж
-function renderSalesTable(containerId, data, title) {
+// Функция отображения таблицы продаж с вертикальным отображением товаров
+function renderSalesTable(containerId, salesData, title) {
   const container = document.getElementById(containerId);
   container.innerHTML = `<h2>${title}</h2>`;
 
-  const headers = Object.keys(data[Object.keys(data)[0]] || {}).sort();
+  // Получаем список всех товаров (первый столбец)
+  const allProducts = currentProducts.map(product => product.name); // Используем `currentProducts` для списка всех продуктов
+
+  // Создаем контейнер для таблицы с горизонтальной прокруткой
+  const tableContainer = document.createElement('div');
+  tableContainer.classList.add('table-container');
 
   const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Date</th>
-        ${headers.map(product => `<th>${product}</th>`).join('')}
-      </tr>
-    </thead>
-  `;
+  table.classList.add('table');
 
-  const tbody = document.createElement('tbody');
-  Object.keys(data)
-    .sort((a, b) => new Date(b) - new Date(a)) // Сортировка дат в порядке убывания
-    .forEach(date => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td data-label="Date">${date}</td>
-        ${headers.map(product => `<td data-label="${product}">${data[date][product] || '-'}</td>`).join('')}
-      `;
-      tbody.appendChild(row);
+  // Заголовок с датами (столбцы)
+  const headerRow = document.createElement('tr');
+  headerRow.innerHTML = `<th>Product</th>` + 
+    Object.keys(salesData).sort().map(date => `<th>${date}</th>`).join('');
+  table.appendChild(headerRow);
+
+  // Строки для каждого товара
+  allProducts.forEach(productName => {
+    const row = document.createElement('tr');
+
+    // Первый столбец — название продукта
+    row.innerHTML = `<td class="product-column">${productName}</td>` + 
+      Object.keys(salesData).sort().map(date => {
+        const quantity = salesData[date][productName] || '-'; // Показываем количество или '-' если данных нет
+        return `<td>${quantity}</td>`;
+      }).join('');
+
+    table.appendChild(row);
+  });
+
+  tableContainer.appendChild(table);
+  container.appendChild(tableContainer);
+}
+
+// Функция для вычисления количества дней между двумя датами
+function getDaysBetweenDates(date1, date2) {
+  const startDate = new Date(date1);
+  const endDate = new Date(date2);
+
+  const differenceInMilliseconds = Math.abs(endDate - startDate);
+  return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+}
+
+// Функция для вычитания дней из заданной даты
+function subtractDaysFromDate(date, days) {
+  const inputDate = new Date(date);
+  inputDate.setDate(inputDate.getDate() - days);
+  return inputDate.toISOString().split('T')[0];
+}
+
+// Генерация всех возможных дат до отображения отчёта с учетом диапазонов
+function getAllDates(pricesData) {
+  const allDates = Object.keys(pricesData).sort(); // Собираем все даты
+  const currentDate = new Date().toISOString().split('T')[0]; // Текущая дата
+  const allGeneratedDates = [];
+
+  let lastValidDate = null;
+  let lastValidPrice = null;
+
+  // Перебираем все даты и добавляем промежуточные даты между ними
+  allDates.forEach((date, index) => {
+    if (date <= currentDate) {
+      if (lastValidDate !== null && getDaysBetweenDates(date, lastValidDate) > 1) {
+        allGeneratedDates.pop();
+        allGeneratedDates.push({
+          startDate: lastValidDate,
+          endDate: subtractDaysFromDate(date, 1),
+          price: lastValidPrice,
+          isRange: true // Это диапазон
+        });
+      }
+
+      // Добавляем текущую дату и ее цену в список
+      allGeneratedDates.push({
+        startDate: date,
+        endDate: date,
+        price: pricesData[date],
+        isRange: false // Это не диапазон, а конкретная дата
+      });
+
+      lastValidDate = date;
+      lastValidPrice = pricesData[date];
+    }
+  });
+
+  // Если последняя дата в данных меньше текущей, добавляем диапазон до сегодняшней даты
+  if (lastValidDate && lastValidDate !== currentDate) {
+    allGeneratedDates.push({
+      startDate: lastValidDate,
+      endDate: currentDate,
+      price: lastValidPrice,
+      isRange: true
     });
+  }
 
-  table.appendChild(tbody);
-  container.appendChild(table);
+  return allGeneratedDates;
 }
 
 
 
-// Функция отображения таблицы цен
-function renderPricesTable(containerId, data, title) {
+
+// Функция отображения таблицы цен с диапазоном дат до текущей даты
+function renderPricesTable(containerId, pricesData, title) {
   const container = document.getElementById(containerId);
   container.innerHTML = `<h2>${title}</h2>`;
 
-  const headers = Object.keys(data[Object.keys(data)[0]] || {}).sort();
+  const allProducts = currentProducts.map(product => product.name);
+
+  // Создаем контейнер для таблицы с горизонтальной прокруткой
+  const tableContainer = document.createElement('div');
+  tableContainer.classList.add('table-container');
 
   const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Date</th>
-        ${headers.map(product => `<th>${product}</th>`).join('')}
-      </tr>
-    </thead>
-  `;
+  table.classList.add('table');
 
-  const tbody = document.createElement('tbody');
-  Object.keys(data)
-    .sort((a, b) => new Date(b) - new Date(a)) // Сортировка дат в порядке убывания
-    .forEach(date => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${date}</td>
-        ${headers.map(product => `<td>${data[date][product] || '-'}</td>`).join('')}
-      `;
-      tbody.appendChild(row);
-    });
+  // Получаем все уникальные даты с диапазонами
+  const allGeneratedDates = getAllDates(pricesData);
 
-  table.appendChild(tbody);
-  container.appendChild(table);
+  // Заголовок с датами (столбцы)
+  const headerRow = document.createElement('tr');
+  headerRow.innerHTML = `<th>Product</th>` + allGeneratedDates.map(date => 
+    `<th>${date.startDate}${date.isRange ? ' - ' + date.endDate : ''}</th>`
+  ).join('');
+  table.appendChild(headerRow);
+
+  // Строки для каждого товара
+  allProducts.forEach(productName => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td class="product-column">${productName}</td>` + 
+      generatePriceColumns(allGeneratedDates, pricesData, productName);
+    table.appendChild(row);
+  });
+
+  tableContainer.appendChild(table);
+  container.appendChild(tableContainer);
 }
+
+
+// Генерация столбцов цен с учетом отсутствующих данных и диапазонов дат
+function generatePriceColumns(allGeneratedDates, pricesData, productName) {
+  let lastPrice = null; // Цена последнего доступного значения
+  let lastDate = null;  // Дата последнего доступного значения
+
+  return allGeneratedDates.map(date => {
+    // Если это диапазон, то извлекаем цену из этого диапазона
+    let price = null;
+
+    // Проверяем, если цена для конкретного продукта существует на данной дате
+    if (date.isRange) {
+      price = date.price[productName];  // Извлекаем цену для конкретного продукта в диапазоне
+    } else {
+      price = pricesData[date.startDate] && pricesData[date.startDate][productName];  // Извлекаем цену для конкретного продукта на одиночной дате
+    }
+
+    if (price) {
+      // Если цена для даты существует, обновляем lastPrice
+      lastPrice = price;
+      lastDate = date.startDate;
+      return `<td>${price}</td>`;
+    } else {
+      // Если нет записи для этой даты, показываем диапазон дат с предыдущей ценой
+      if (lastPrice !== null) {
+        return `<td>${lastDate} - ${date.startDate} (${lastPrice})</td>`;
+      }
+      return `<td>-</td>`;
+    }
+  }).join('');
+}
+
 
 
 // Отображение продуктов на вкладке Products
@@ -313,7 +466,6 @@ function renderHorizontalRows(containerId, data, title) {
       container.appendChild(daySeparator);
 
       Object.entries(data[date]).forEach(([productName, value]) => {
-        // Проверяем, были ли продажи (value > 0) перед отображением строки
         if (value > 0) {
           const row = document.createElement('div');
           row.classList.add('horizontal-row');

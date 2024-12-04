@@ -464,3 +464,56 @@ table th {
 .sort-arrow.sort-desc {
   transform: rotate(180deg);
 }
+
+/* Контейнер для таблицы с прокруткой */
+.table-container {
+  overflow-x: auto;
+  display: block;
+  max-width: 100%;
+  margin-top: 20px;
+}
+
+/* Стили для самой таблицы */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0;
+}
+
+/* Фиксированный первый столбец */
+.table th, .table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.table th:first-child, .table td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+/* Даты в заголовке (горизонтальная прокрутка) */
+.table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Добавляем класс для прокрутки */
+.table td {
+  text-align: center;
+  min-width: 120px; /* Минимальная ширина для удобного отображения */
+}
+
+/* Стили для контейнера продуктов */
+.product-column {
+  width: 200px;
+  text-align: left;
+  background-color: #f9f9f9;
+  padding-left: 10px;
+  font-weight: bold;
+}

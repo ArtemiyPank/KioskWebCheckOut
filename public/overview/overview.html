@@ -15,9 +15,9 @@
 
     <!-- Tabs for each table -->
     <div class="tabs">
-      <button class="tab-button active" onclick="openTab(event, 'in-store-sales')">On table sales</button>
-      <button class="tab-button" onclick="openTab(event, 'delivery-all-sales')">Delivery</button>
-      <!-- <button class="tab-button" onclick="openTab(event, 'delivery-own-sales')">Delivery for Own</button> -->
+      <button class="tab-button active" onclick="openTab(event, 'all-sales')">All sales</button>
+      <button class="tab-button" onclick="openTab(event, 'in-store-sales')">On table sales</button>
+      <button class="tab-button" onclick="openTab(event, 'delivery-sales')">Delivery</button>
       <button class="tab-button" onclick="openTab(event, 'prices')">Prices</button>
       <button class="tab-button" onclick="openTab(event, 'products')">Products</button>
       <button class="tab-button" onclick="openTab(event, 'categories')">Categories</button>
@@ -25,14 +25,14 @@
     </div>
 
     <!-- Content for each tab -->
-    <div id="in-store-sales" class="tab-content active">
+    <div id="all-sales" class="tab-content active">
+      <div id="all-sales-table"></div>
+    </div>
+    <div id="in-store-sales" class="tab-content">
       <div id="in-store-sales-table"></div>
     </div>
-    <div id="delivery-all-sales" class="tab-content">
-      <div id="delivery-all-sales-table"></div>
-    </div>
-    <div id="delivery-own-sales" class="tab-content">
-      <div id="delivery-own-sales-table"></div>
+    <div id="delivery-sales" class="tab-content">
+      <div id="delivery-sales-table"></div>
     </div>
     <div id="prices" class="tab-content">
       <div id="prices-table"></div>
