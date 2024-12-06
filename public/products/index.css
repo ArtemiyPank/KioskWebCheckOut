@@ -322,3 +322,24 @@ h1 {
 .modal-button:hover {
   background-color: #0056b3;
 }
+
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 14px;
+}
+
+.positive-notification {
+  background-color: #4caf50;
+}
+
+.negative-notification {
+  background-color: #af4c4c;
+}

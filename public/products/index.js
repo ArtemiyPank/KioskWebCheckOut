@@ -1,3 +1,33 @@
+// Обычные временные интервалы
+const saleTime = [
+  { start: 0, end: 22 },
+  { start: 19, end: 22 }, // Продажи за столом с 19:00 до 22:00
+  { start: 12.75, end: 14, day: 5 } // Продажи в пятницу с 12:45 до 14:00
+];
+const deliveryTime = [
+  { start: 16, end: 19 }, // Доставки с 16:00 до 19:00
+  { start: 22, end: 23 } // Доставки с 22:00 до 23:00
+];
+
+function isWithinTimeRange(type) {
+  const now = new Date();
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+  const currentDay = now.getDay(); // 0 - воскресенье, 6 - суббота
+
+  if (type === 'in_store') {
+    return saleTime.some(range => {
+      if (range.day !== undefined && range.day !== currentDay) {
+        return false;
+      }
+      return currentHour >= range.start && currentHour < range.end;
+    });
+  } else if (type === 'delivery') {
+    return deliveryTime.some(range => currentHour >= range.start && currentHour < range.end);
+  }
+
+  return false; // Если тип не указан
+}
+
 let currentProducts = [];
 let currentSortOrder = 'asc';
 
@@ -181,8 +211,23 @@ async function saveReport(saleType) {
 
   if (products.length === 0) {
     alert("No sales data to save.");
+    closeReportModal(); // Закрываем модальное окно
     return;
   }
+
+    // Проверяем, находится ли время в допустимом интервале
+    if (!isWithinTimeRange(saleType)) {
+      const message = saleType === 'in_store'
+        ? "Сейчас не время для продаж за столом, ты точно нажал правильную кнопку? \n זה לא הזמן למכירות בשולחן. האם אתה בטוח שלחצת על הכפתור הנכון?"
+        : "Сейчас не время для доставок, ты точно нажал правильную кнопку? \nזה לא הזמן למשלוחים. האם אתה בטוח שלחצת על הכפתור הנכון?";
+  
+      if (!confirm(message)) {
+        showNotification("Operation cancelled.", true);
+        closeReportModal(); // Закрываем модальное окно
+  
+        return;
+      }
+    }
 
   try {
     // Отправка отчета на сервер
@@ -195,7 +240,7 @@ async function saveReport(saleType) {
     });
 
     if (response.ok) {
-      alert('Report saved successfully!');
+      showNotification('Report saved successfully!', false);
       localStorage.removeItem('salesData'); // Сброс локальных данных после сохранения
       loadProducts();  // Загружаем данные о продуктах
       closeReportModal(); // Закрываем модальное окно
@@ -207,6 +252,23 @@ async function saveReport(saleType) {
     console.error('Error saving report:', error);
     alert('An error occurred while saving the report. Please try again.');
   }
+}
+
+
+function showNotification(message, isNegative = false) {
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.classList.add('notification');
+  if (isNegative) {
+    notification.classList.add('negative-notification');
+  } else {
+    notification.classList.add('positive-notification');
+  }
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 4000);
 }
 
 
