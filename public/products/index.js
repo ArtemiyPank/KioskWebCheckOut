@@ -1,6 +1,5 @@
 // Обычные временные интервалы
 const saleTime = [
-  { start: 0, end: 22 },
   { start: 19, end: 22 }, // Продажи за столом с 19:00 до 22:00
   { start: 12.75, end: 14, day: 5 } // Продажи в пятницу с 12:45 до 14:00
 ];
@@ -215,20 +214,29 @@ async function saveReport(saleType) {
     return;
   }
 
-    // Проверяем, находится ли время в допустимом интервале
-    if (!isWithinTimeRange(saleType)) {
-      const message = saleType === 'in_store'
-        ? "Сейчас не время для продаж за столом, ты точно нажал правильную кнопку? \n זה לא הזמן למכירות בשולחן. האם אתה בטוח שלחצת על הכפתור הנכון?"
-        : "Сейчас не время для доставок, ты точно нажал правильную кнопку? \nזה לא הזמן למשלוחים. האם אתה בטוח שלחצת על הכפתור הנכון?";
-  
-      if (!confirm(message)) {
-        showNotification("Operation cancelled.", true);
-        closeReportModal(); // Закрываем модальное окно
-  
-        return;
-      }
-    }
+  // Проверяем, находится ли время в допустимом интервале
+  if (!isWithinTimeRange(saleType)) {
+    const hebrewText = saleType === 'in_store'
+      ? "זה לא הזמן למכירות בשולחן. האם אתה בטוח שלחצת על הכפתור הנכון?"
+      : "זה לא הזמן למשלוחים. האם אתה בטוח שלחצת על הכפתור הנכון?";
 
+    const russianText = saleType === 'in_store'
+      ? "Сейчас не время для продаж за столом, ты точно нажал правильную кнопку?"
+      : "Сейчас не время для доставок, ты точно нажал правильную кнопку?";
+
+    showTimeRangeModal(hebrewText, russianText,
+      () => executeSaveReport(products, saleType, date),
+      () => {
+        showNotification("Operation cancelled.", true)
+        closeReportModal(); // Закрываем модальное окно
+      });
+    return;
+  }
+
+  executeSaveReport(products, saleType, date);
+}
+
+async function executeSaveReport(products, saleType, date) {
   try {
     // Отправка отчета на сервер
     const response = await fetch('/api/save-report', {
@@ -253,6 +261,37 @@ async function saveReport(saleType) {
     alert('An error occurred while saving the report. Please try again.');
   }
 }
+
+
+function showTimeRangeModal(hebrewText, russianText, onConfirm, onCancel) {
+  const modal = document.getElementById('time-range-modal');
+  const hebrewElement = document.getElementById('time-range-modal-text-hebrew');
+  const russianElement = document.getElementById('time-range-modal-text-russian');
+  const confirmButton = document.getElementById('time-range-modal-confirm');
+  const cancelButton = document.getElementById('time-range-modal-cancel');
+
+  
+
+  // Устанавливаем текст
+  hebrewElement.textContent = hebrewText;
+  russianElement.textContent = russianText;
+
+  // Показываем модальное окно
+  modal.style.display = 'block';
+
+  // Добавляем обработчики событий
+  confirmButton.onclick = () => {
+    modal.style.display = 'none';
+    onConfirm();
+  };
+
+  cancelButton.onclick = () => {
+    modal.style.display = 'none';
+    onCancel();
+  };
+}
+
+
 
 
 function showNotification(message, isNegative = false) {
