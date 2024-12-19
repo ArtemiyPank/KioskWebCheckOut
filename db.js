@@ -318,7 +318,11 @@ function getPricesDataFormatted(callback) {
 // Получение данных о выручке
 function getRevenueByDate(callback) {
   const query = `
-    SELECT sales.date, SUM(sales.quantity * prices.price) AS total_revenue
+      SELECT 
+      sales.date,
+      SUM(sales.quantity * prices.price) AS total_revenue,
+      SUM(CASE WHEN sales.sale_type = 'delivery' THEN sales.quantity * prices.price ELSE 0 END) AS delivery_revenue,
+      SUM(CASE WHEN sales.sale_type = 'in_store' THEN sales.quantity * prices.price ELSE 0 END) AS in_store_revenue
     FROM sales
     JOIN prices ON sales.product_id = prices.product_id AND sales.date = prices.date
     GROUP BY sales.date

@@ -394,3 +394,9 @@ h1 {
 .negative-notification {
   background-color: #af4c4c;
 }
+
+
+#revenue-table {
+  display: flex;
+  justify-content: center;
+}

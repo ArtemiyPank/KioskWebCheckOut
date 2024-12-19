@@ -221,8 +221,8 @@ async function saveReport(saleType) {
       : "זה לא הזמן למשלוחים. האם אתה בטוח שלחצת על הכפתור הנכון?";
 
     const russianText = saleType === 'in_store'
-      ? "Сейчас не время для продаж за столом, ты точно нажал правильную кнопку?"
-      : "Сейчас не время для доставок, ты точно нажал правильную кнопку?";
+      ? "Сейчас не время для продаж ЗА СТОЛОМ, ты точно нажал правильную кнопку?"
+      : "Сейчас не время для ДОСТАВОК, ты точно нажал правильную кнопку?";
 
     showTimeRangeModal(hebrewText, russianText,
       () => executeSaveReport(products, saleType, date),
@@ -307,7 +307,7 @@ function showNotification(message, isNegative = false) {
 
   setTimeout(() => {
     document.body.removeChild(notification);
-  }, 4000);
+  }, 3000);
 }
 
 

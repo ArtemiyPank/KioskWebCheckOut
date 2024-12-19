@@ -435,7 +435,9 @@ function renderRevenueTable(containerId, data) {
     <thead>
       <tr>
         <th>Date</th>
-        <th>Total Revenue</th>
+        <th>Delivers</th>
+        <th>At table</th>
+        <th>Total</th>
       </tr>
     </thead>
   `;
@@ -447,6 +449,8 @@ function renderRevenueTable(containerId, data) {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${item.date}</td>
+        <td>${item.in_store_revenue} ₪</td>
+        <td>${item.delivery_revenue} ₪</td>
         <td>${item.total_revenue} ₪</td>
       `;
       tbody.appendChild(row);
