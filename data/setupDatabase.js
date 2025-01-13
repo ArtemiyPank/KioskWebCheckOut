@@ -36,6 +36,34 @@ db.serialize(() => {
     UNIQUE (date, product_id, order_number),  -- Prevent overwriting the same product on the same day with the same order number
     FOREIGN KEY (product_id) REFERENCES products (id)
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS safe_counts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    safe_name TEXT NOT NULL, -- Название сейфа или кассы
+    amount REAL NOT NULL, -- Количество денег
+    counted_by TEXT NOT NULL, -- Кто пересчитывал
+    date_time DATETIME DEFAULT CURRENT_TIMESTAMP -- Дата и время пересчёта
+  )`);
+  
+  db.run(`CREATE TABLE IF NOT EXISTS transfers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_safe TEXT NOT NULL, -- Откуда деньги были взяты
+    to_safe TEXT NOT NULL, -- Куда деньги были переложены
+    amount REAL NOT NULL, -- Количество денег
+    transferred_by TEXT NOT NULL, -- Кто переложил
+    date_time DATETIME DEFAULT CURRENT_TIMESTAMP -- Дата и время перекладывания
+  )`);
+  
+  db.run(`CREATE TABLE IF NOT EXISTS global_counts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    counted_by TEXT NOT NULL, -- Кто пересчитывал
+    date_time DATETIME DEFAULT CURRENT_TIMESTAMP, -- Дата и время пересчёта
+    Artioms_safe REAL NOT NULL, -- Деньги в банке
+    Ilyas_safe REAL NOT NULL, -- Деньги в большом сейфе
+    Main_cash_desk REAL NOT NULL, -- Деньги в основной кассе
+    Ofris_cash_desk REAL NOT NULL -- Деньги в кассе Офри
+  )`);
+  
 });
 
 console.log('Database setup completed.');

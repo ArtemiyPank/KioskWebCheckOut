@@ -336,6 +336,53 @@ function getRevenueByDate(callback) {
 }
 
 
+// Добавление записи о пересчёте сейфа
+function addSafeCount({ safe_name, amount, counted_by }, callback) {
+  const query = `
+    INSERT INTO safe_counts (safe_name, amount, counted_by) 
+    VALUES (?, ?, ?)
+  `;
+  db.run(query, [safe_name, amount, counted_by], function (err) {
+    if (err) {
+      console.error('Error adding safe count:', err.message);
+      return callback(err);
+    }
+    callback(null, { id: this.lastID });
+  });
+}
+
+// Добавление записи о перекладывании денег
+function addTransfer({ from_safe, to_safe, amount, transferred_by }, callback) {
+  const query = `
+    INSERT INTO transfers (from_safe, to_safe, amount, transferred_by) 
+    VALUES (?, ?, ?, ?)
+  `;
+  db.run(query, [from_safe, to_safe, amount, transferred_by], function (err) {
+    if (err) {
+      console.error('Error adding transfer:', err.message);
+      return callback(err);
+    }
+    callback(null, { id: this.lastID });
+  });
+}
+
+// Добавление записи о глобальном пересчёте
+function addGlobalCount({ counted_by, Artioms_safe, Ilyas_safe, Main_cash_desk, Ofris_cash_desk }, callback) {
+  const query = `
+    INSERT INTO global_counts (counted_by, Artioms_safe, Ilyas_safe, Main_cash_desk, Ofris_cash_desk) 
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  db.run(query, [counted_by, Artioms_safe, Ilyas_safe, Main_cash_desk, Ofris_cash_desk], function (err) {
+    if (err) {
+      console.error('Error adding global count:', err.message);
+      return callback(err);
+    }
+    callback(null, { id: this.lastID });
+  });
+}
+
+
+
 module.exports = {
   getProducts,
   addProduct,
@@ -351,4 +398,7 @@ module.exports = {
   getSalesDataForTable,
   getPricesDataFormatted,
   getRevenueByDate,
+  addSafeCount,
+  addTransfer,
+  addGlobalCount,
 };

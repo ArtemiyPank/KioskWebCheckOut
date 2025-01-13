@@ -435,8 +435,8 @@ function renderRevenueTable(containerId, data) {
     <thead>
       <tr>
         <th>Date</th>
-        <th>Delivers</th>
         <th>At table</th>
+        <th>Delivers</th>
         <th>Total</th>
       </tr>
     </thead>
@@ -600,3 +600,84 @@ function renderListTable(containerId, data, title) {
   table.appendChild(tbody);
   container.appendChild(table);
 }
+
+
+
+async function addSafeCount() {
+  const safeName = document.getElementById('safe-name').value;
+  const amount = parseFloat(document.getElementById('safe-amount').value);
+  const countedBy = document.getElementById('safe-counted-by').value;
+
+  if (!safeName || isNaN(amount) || !countedBy) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  const response = await fetch('/api/safe-count', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ safe_name: safeName, amount, counted_by: countedBy }),
+  });
+
+  if (response.ok) {
+    alert('Safe count added');
+  } else {
+    alert('Error adding safe count');
+  }
+}
+
+async function addTransfer() {
+  const fromSafe = document.getElementById('from-safe').value;
+  const toSafe = document.getElementById('to-safe').value;
+  const amount = parseFloat(document.getElementById('transfer-amount').value);
+  const transferredBy = document.getElementById('transfer-by').value;
+
+  if (!fromSafe || !toSafe || isNaN(amount) || !transferredBy) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  const response = await fetch('/api/transfer', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from_safe: fromSafe, to_safe: toSafe, amount, transferred_by: transferredBy }),
+  });
+
+  if (response.ok) {
+    alert('Transfer added');
+  } else {
+    alert('Error adding transfer');
+  }
+}
+
+async function addGlobalCount() {
+  const artiomsSafe = parseFloat(document.getElementById('global-artioms-safe').value);
+  const ilyasSafe = parseFloat(document.getElementById('global-ilyas-safe').value);
+  const mainCash = parseFloat(document.getElementById('global-main-cash').value);
+  const ofrisCash = parseFloat(document.getElementById('global-ofris-cash').value);
+  const countedBy = document.getElementById('global-counted-by').value;
+
+  if (isNaN(artiomsSafe) || isNaN(ilyasSafe) || isNaN(mainCash) || isNaN(ofrisCash) || !countedBy) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  const response = await fetch('/api/global-count', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      counted_by: countedBy,
+      Artioms_safe: artiomsSafe,
+      Ilyas_safe: ilyasSafe,
+      Main_cash_desk: mainCash,
+      Ofris_cash_desk: ofrisCash,
+    }),
+  });
+
+  if (response.ok) {
+    alert('Global count added');
+  } else {
+    alert('Error adding global count');
+  }
+}
+

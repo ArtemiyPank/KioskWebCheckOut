@@ -78,6 +78,57 @@
     </div>
   </div>
 
+
+  <div class="money-management">
+    <h2>Money Management</h2>
+  
+    <!-- Пересчёт денег -->
+    <div class="safe-count">
+      <h3>Safe Count</h3>
+      <select id="safe-name">
+        <option value="Artioms_safe">Artioms Safe</option>
+        <option value="Ilyas_safe">Ilyas Safe</option>
+        <option value="Main_cash_desk">Main Cash Desk</option>
+        <option value="Ofris_cash_desk">Ofris Cash Desk</option>
+      </select>
+      <input type="number" id="safe-amount" placeholder="Amount">
+      <input type="text" id="safe-counted-by" placeholder="Counted By">
+      <button onclick="addSafeCount()">Add Safe Count</button>
+    </div>
+  
+    <!-- Перекладывание денег -->
+    <div class="transfer">
+      <h3>Transfer</h3>
+      <select id="from-safe">
+        <option value="Artioms_safe">Artioms Safe</option>
+        <option value="Ilyas_safe">Ilyas Safe</option>
+        <option value="Main_cash_desk">Main Cash Desk</option>
+        <option value="Ofris_cash_desk">Ofris Cash Desk</option>
+      </select>
+      <select id="to-safe">
+        <option value="Artioms_safe">Artioms Safe</option>
+        <option value="Ilyas_safe">Ilyas Safe</option>
+        <option value="Main_cash_desk">Main Cash Desk</option>
+        <option value="Ofris_cash_desk">Ofris Cash Desk</option>
+      </select>
+      <input type="number" id="transfer-amount" placeholder="Amount">
+      <input type="text" id="transfer-by" placeholder="Transferred By">
+      <button onclick="addTransfer()">Add Transfer</button>
+    </div>
+  
+    <!-- Глобальный пересчёт -->
+    <div class="global-count">
+      <h3>Global Count</h3>
+      <input type="number" id="global-artioms-safe" placeholder="Artioms Safe">
+      <input type="number" id="global-ilyas-safe" placeholder="Ilyas Safe">
+      <input type="number" id="global-main-cash" placeholder="Main Cash Desk">
+      <input type="number" id="global-ofris-cash" placeholder="Ofris Cash Desk">
+      <input type="text" id="global-counted-by" placeholder="Counted By">
+      <button onclick="addGlobalCount()">Add Global Count</button>
+    </div>
+  </div>
+  
+
   <!-- Модальное окно для редактирования или добавления продукта -->
   <div id="edit-product-modal" class="modal">
     <div class="modal-content">

@@ -204,6 +204,50 @@ app.get('/api/revenue-data', (req, res) => {
 });
 
 
+// Маршрут для добавления пересчёта сейфа
+app.post('/api/safe-count', (req, res) => {
+  const { safe_name, amount, counted_by } = req.body;
+
+  db.addSafeCount({ safe_name, amount, counted_by }, (err, result) => {
+    if (err) {
+      res.status(500).send('Error adding safe count');
+    } else {
+      res.status(201).json(result);
+    }
+  });
+});
+
+// Маршрут для добавления записи о перекладывании денег
+app.post('/api/transfer', (req, res) => {
+  const { from_safe, to_safe, amount, transferred_by } = req.body;
+
+  db.addTransfer({ from_safe, to_safe, amount, transferred_by }, (err, result) => {
+    if (err) {
+      res.status(500).send('Error adding transfer');
+    } else {
+      res.status(201).json(result);
+    }
+  });
+});
+
+// Маршрут для добавления записи о глобальном пересчёте
+app.post('/api/global-count', (req, res) => {
+  const { counted_by, Artioms_safe, Ilyas_safe, Main_cash_desk, Ofris_cash_desk } = req.body;
+
+  db.addGlobalCount(
+    { counted_by, Artioms_safe, Ilyas_safe, Main_cash_desk, Ofris_cash_desk },
+    (err, result) => {
+      if (err) {
+        res.status(500).send('Error adding global count');
+      } else {
+        res.status(201).json(result);
+      }
+    }
+  );
+});
+
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Page for overview: http://localhost:${PORT}/menu/menu.html`)
