@@ -435,8 +435,8 @@ function renderRevenueTable(containerId, data) {
     <thead>
       <tr>
         <th>Date</th>
-        <th>Delivers</th>
         <th>At table</th>
+        <th>Delivers</th>
         <th>Total</th>
       </tr>
     </thead>
