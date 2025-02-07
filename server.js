@@ -208,5 +208,5 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Page for overview: http://localhost:${PORT}/menu/menu.html`)
   console.log(`Page for products: http://localhost:${PORT}/products/index.html`)
-  console.log(`Page for overview: http://localhost:${PORT}/overview/overview.html`)
+  console.log(`Page for overview: http://localhost:${PORT}/admin/overview.html`)
 });
